@@ -32,10 +32,12 @@ A nuestra familia, por su amor y apoyo inquebrantable; a nuestros profesores, po
 ---
 
 ## **Resumen**
+El presente proyecto de tesis propone el desarrollo de un sistema de control de colas con acceso por QR mediante identificación biométrica, enfocado en mejorar la eficiencia y seguridad en agentes bancarios del sistema financiero peruano. La problemática principal radica en las largas filas y los tiempos excesivos de espera que afectan especialmente a poblaciones vulnerables como adultos mayores y pensionistas, debido a procesos manuales de validación y gestión de operaciones. La solución planteada integra tres componentes clave: acceso mediante QR como alternativa a las tarjetas físicas, verificación biométrica para garantizar la seguridad en las transacciones, y un módulo de inteligencia artificial capaz de monitorear en tiempo real la cantidad de usuarios en la fila y el promedio de atención por persona. Con ello, se busca reducir la congestión en los agentes bancarios, optimizar los recursos disponibles y garantizar una experiencia de usuario más ágil, inclusiva y segura.
 
 ---
 
 ## **Abstract**
+This thesis project proposes the development of a queue management system with QR-based access and biometric identification, aimed at improving efficiency and security in banking agents within the Peruvian financial system. The main problem lies in long queues and excessive waiting times that particularly affect vulnerable populations such as the elderly and pensioners, due to manual processes of identity validation and transaction management. The proposed solution integrates three key components: QR-based access as an alternative to physical cards, biometric verification to ensure secure transactions, and an artificial intelligence module capable of monitoring in real time the number of users in line and the average service time per person. This approach seeks to reduce congestion in banking agents, optimize available resources, and provide a faster, more inclusive, and secure user experience.
 
 ---
 
