@@ -1,7 +1,7 @@
 # Objetivos
 
-##Objetivo General
-Desarrollar un sistema inteligente de control de colas que permita optimizar los tiempos de espera en agentes bancarios mediante el acceso por código QR y la verificación biométrica, integrando herramientas de inteligencia artificial para el monitoreo en tiempo real de usuarios y tiempos de atención. 
+## Objetivo General
+Desarrollar un sistema un sistema para la gestión segura de colas en la atención al cliente de la entidades bancarias.
 
 ## Objetivos Específicos
 Analizar los requerimientos funcionales y no funcionales necesarios para implementar un sistema de control de colas en agentes bancarios, considerando seguridad, accesibilidad y experiencia del usuario.

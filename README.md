@@ -1,4 +1,4 @@
-# Desarrollo de un sistema web para la gestión segura de colas y atención al cliente en entidades bancarias
+# DESARROLLO DE UN SISTEMA WEB PARA LA GESTIÓN SEGURA DE COLAS EN LA ATENCIÓN AL CLIENTE DE LAS ENTIDADES BANCARIAS
 
 ---s
 
