@@ -19,3 +19,22 @@ La plataforma Github se utiliza para gestionar el ciclo de vida del software med
 La implementación de GitHub en el desarrollo de nuestro Sistema Web es fundamental, ya que facilitará la colaboración remota del equipo, permitiendo un trabajo simultáneo y organizado mediante el control de versiones, lo que optimizará el ciclo de desarrollo del proyecto.
 
 ---
+
+# MVC
+Segun Enriquez et al., (2023) señala que el MVC es un patron arquitectonico que plantea dividir el aplicativo en modulos llamados modelo, vista y conmtrolador, con la finalidad de que esten claramente diferenciados y tengan una estrucutura definida. Asimismo, la separacion en modulos ayuda a crear un software fuerte, manetnible y escalable.
+
+El patron arquitectonico MVC se emplea mediante el Modelo que representa la logica de negocio y el acceso a datos, la Vista que es la interfaz del usuario (UI) y el Controlador que hace el rol de intermediario entre la Vista y el Modelo. Sus ventajas son: la separacion de responsabilidades, mantenimiento del codigo y el crecimiento del aplicativo.
+
+El uso del patron MVC en el presente Proyecto Web es primordial para el desarrollo del mismo, porque nos facilitara la implementacion de nuevos modulos, facilitar la correcion de errores y facilitar el trabajo en equipo.
+
+---
+
+# JPA
+Spring Data JPA es un componente del ecosistema Spring que facilita el acceso y la gestión de datos persistentes en aplicaciones Java, basándose en la especificación JPA para el mapeo objeto-relacional (Darzu, 2024).
+
+El uso de JPA es para simplificar el acceso y manipulacion de datos en aplicaciones Java, a traves de repositorios, sin necesidad de escribir consultas SQL complejas. Sus principales ventajas son la reduccion signficativa de codigo, una integracion fluida con el ecosistema de Spring, consultas derivadas del nombre de los metodos y facilitar eld esarrrollo de capas de persistencia.
+
+En el sistema web que se desarrollara, se opto por utilizar Spring Data JPA con el proposito de simplificar el acceso y la gestion de datos dentro de la aplicacion, aprovechando el mapeo objeto-relacional (ORM) y el uso de repositorios que automatizan las operaciones de persistencia.
+
+
+
