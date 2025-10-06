@@ -36,5 +36,11 @@ El uso de JPA es para simplificar el acceso y manipulacion de datos en aplicacio
 
 En el sistema web que se desarrollara, se opto por utilizar Spring Data JPA con el proposito de simplificar el acceso y la gestion de datos dentro de la aplicacion, aprovechando el mapeo objeto-relacional (ORM) y el uso de repositorios que automatizan las operaciones de persistencia.
 
+# Spring Boot
+Elegí usar Spring Boot porque automatiza mucha de la configuración pesada que normalmente requiere una aplicación Java con Spring. Un estudio de 2023 sobre desarrollo de backend destaca que Spring Boot reduce el “código repetitivo” y agiliza la integración con JPA para persistencia de datos. 
+
+En mi proyecto, Spring Boot me permite arrancar rápido, integrar controladores HTTP, servicios y conectar fácilmente con MySQL mediante Spring Data JPA. Además, facilita un patrón estructurado para escalabilidad futura.
+
+También una tesis de fin de máster analizó Spring Boot como framework de aplicaciones web empresariales y resaltó su impacto positivo en la productividad y uso de librerías incluidas.
 
 
