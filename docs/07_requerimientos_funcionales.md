@@ -3,7 +3,7 @@
 2. El sistema debe validar la identidad del cliente mediante el QR y la contraseña
 3. El sistema debe permitir realizar operaciones financieras básicas(depósitos, retiros y transferencias).
 4. El sistema debe permitir al cliente consultar el historial de sus operaciones y transacciones realizadas asociadas a su código QR
-5. El sistema en el sistema se deben visualizar Los tiempos de espera por cliente y la cantidad de clientes atendidos.
+5. El sistema en el sistema se deben visualizar los tiempos de espera por cliente y la cantidad de clientes atendidos.
 6. El sistema usar algoritmos para monitorear el tiempo real de atención por cliente y la cantidad de clientes atendidos.
 7. El sistema debe generar alertas automáticas si el tiempo promedio de atención excede ciertos umbrales.
 
