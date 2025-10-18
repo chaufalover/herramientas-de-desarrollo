@@ -37,10 +37,34 @@ El uso de JPA es para simplificar el acceso y manipulacion de datos en aplicacio
 En el sistema web que se desarrollara, se opto por utilizar Spring Data JPA con el proposito de simplificar el acceso y la gestion de datos dentro de la aplicacion, aprovechando el mapeo objeto-relacional (ORM) y el uso de repositorios que automatizan las operaciones de persistencia.
 
 # Spring Boot
-Elegí usar Spring Boot porque automatiza mucha de la configuración pesada que normalmente requiere una aplicación Java con Spring. Un estudio de 2023 sobre desarrollo de backend destaca que Spring Boot reduce el “código repetitivo” y agiliza la integración con JPA para persistencia de datos. 
+Spring Boot es un módulo de Spring que permite, de manera sencilla, crear aplicaciones autónomas y listas para producción basadas en Java, eliminando gran parte de la configuración manual.” (Ramírez Pérez, 2020)
 
-En mi proyecto, Spring Boot me permite arrancar rápido, integrar controladores HTTP, servicios y conectar fácilmente con MySQL mediante Spring Data JPA. Además, facilita un patrón estructurado para escalabilidad futura.
+Esta cita muestra la ventaja clave de Spring Boot que es contar con una mejor configuración y un mejor arranque en la aplicaciones. En nuestro proyecto tener un framework para realizar las funcionalidades como operaciones, autenticación por QR y monitoreo de colas, es una gran ventaja y nos permite solo enfocarnos en la logica.
 
 También una tesis de fin de máster analizó Spring Boot como framework de aplicaciones web empresariales y resaltó su impacto positivo en la productividad y uso de librerías incluidas.
+
+# Mysql
+"MySQL es un sistema de gestión de bases de datos relacionales (RDBMS) de código abierto que se utiliza para almacenar y gestionar datos. Su fiabilidad, rendimiento, escalabilidad y facilidad de uso lo convierten en una opción popular para los desarrolladores.” (Erickson, 2024)
+
+Esta cita nos reafirma nuestra eleccion de mysql para nuestro proyecto. En el entorno bancario que estamos desarrollando, donde se manejarán múltiples clientes, cuentas, transacciones y altos volúmenes de operaciones, necesitamos un sistema que ofrezca consistencia, escalabilidad y buen rendimiento. Mysql cumple perfectamente estas exigencias
+
+En nuestro sistema, MySQL será la capa de gestión de datos donde residirán todas las entidades críticas como cliente, cuenta, tipo de cuenta, tipo de transacción, transacción, empleado y sus relaciones.
+
+# Bootstrap
+“Bootstrap es un framework de desarrollo web gratuito y de código abierto. Está diseñado para facilitar el proceso de desarrollo de los sitios web responsivos y orientados a los dispositivos móviles, proporcionando una colección de sintaxis para diseños de plantillas.” (Deyimar A., 2025)
+
+Para nuestro sistema bancario la elección de Bootstrap nos parece muy adecuada porque necesitamos que la aplicación web sea usable en múltiples dispositivos como computadora, tabletas, teléfonos móviles; y que tenga una apariencia profesional y consistente sin tener que diseñar todos los componentes desde cero.
+
+En la nuestra plataforma la usaremos para construir la interfaz de nuestro proyecto. Asimismo con esto podremos asegurar que se adapte a los diferentes tamaños de los dispositivos.
+
+# Thymeleaf
+
+“Thymeleaf es un moderno motor de plantillas del lado del servidor para entornos web y autónomos, capaz de procesar HTML, XML, JavaScript, CSS e incluso texto plano.”
+
+Como lo indica en estea cita Thymeleaf es una herramienta clave porque conecta directamente con el backend como lo puede ser spring boot y nos permite generar vistas HTML dinámicas desde los datos de nuestro sistema.
+
+En nuestro sistema web lo usaremos para gestionar los distintintos aprtados que tenemos como lo son registro de clientes, operacines, autentificación, servicios y visualización de los empleados. 
+
+
 
 
