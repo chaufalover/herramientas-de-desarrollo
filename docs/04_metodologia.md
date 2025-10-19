@@ -21,3 +21,5 @@ Se empleo para este proyecto con la finalidad de agilizar la entrega de la plata
 ![progreso](/docs/kanban/avance3.png)
 
 ---
+
+![progreso](/docs/kanban/avance4.png)
