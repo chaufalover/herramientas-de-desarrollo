@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 ## Marco Teorico
 
 ---
@@ -75,4 +73,3 @@ Es un lenguaje robusto y orientado a objetos. ACuenta con un extenso ecosistema 
 Python será empleado en el módulo de inteligencia artificial, encargado de procesar y analizar datos provenientes de video e imágenes. Este módulo permitirá detectar el número de personas en la fila mediante técnicas de visión computacional y calcular el tiempo promedio de atención de los usuarios. Los resultados generados serán enviados al backend desarrollado con Spring REST para su almacenamiento y visualización.
 
 Dispone de una amplia gama de librerías para inteligencia artificial y visión por computadora. Su sintaxis sencilla y claridad en el desarrollo facilitan la implementación de algoritmos de análisis. Además, presenta una gran interoperabilidad con otros lenguajes, lo que permite integrarse fácilmente con Java a través de servicios REST.
->>>>>>> Stashed changes
