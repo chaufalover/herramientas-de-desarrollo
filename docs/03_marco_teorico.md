@@ -46,7 +46,7 @@ También una tesis de fin de máster analizó Spring Boot como framework de apli
 ---
 
 #Spring REST APIs
-
+REST o Representational State Transfer es un estilo de Arquitectura al momento de realizar una comunicación entre cliente y servidor (Cecilio Álvarez, 2023) que nos permite acciones adecuadas (GET, POST, PUT, DELETE, y otras), almacenamiento en caché, redirección y envio, seguridad (cifrado y autenticación).
 
 Se utilizará para desarrollar los servicios backend responsables de la comunicación entre los diferentes módulos del sistema. Permitirá gestionar el registro y acceso mediante código QR y validación biométrica, así como el módulo de monitoreo con inteligencia artificial para la detección de personas y cálculo del tiempo de atención. 
 
@@ -61,14 +61,14 @@ Este proporciona un alto nivel de seguridad mediante una gestión avanzada de au
 
 
 #Java
-
+Java es un lenguaje de programación orientado a objetos, multiplataforma ya que se ejecuta en diversos dispositivos (Zuleyka Mesa, 2022), además posee una amplia documentación de manuales en el cual se muestran sus funciones y prestaciones de las diferentes APIS de programación.
 
 Java será el lenguaje principal para el desarrollo del backend. Con él se implementarán los servicios REST y las conexiones con la base de datos
 
 Es un lenguaje robusto y orientado a objetos. ACuenta con un extenso ecosistema de librerías y frameworks, como Spring Boot, Hibernate y Maven. Su portabilidad, al ejecutarse en cualquier entorno con JVM, lo convierte en una opción versátil y duradera.
 
 #Python
-
+Es un lenguaje de programación informático que se utiliza para crear sitios web y software, automatizar tareas y realizar análisis de datos (Coursera Staff, 2023), al ser un lenguaje de propósito general, puede ser utilizado para crear una variedad de programas diferentes y no está especializado en ningún problema en específico.
 
 Python será empleado en el módulo de inteligencia artificial, encargado de procesar y analizar datos provenientes de video e imágenes. Este módulo permitirá detectar el número de personas en la fila mediante técnicas de visión computacional y calcular el tiempo promedio de atención de los usuarios. Los resultados generados serán enviados al backend desarrollado con Spring REST para su almacenamiento y visualización.
 
