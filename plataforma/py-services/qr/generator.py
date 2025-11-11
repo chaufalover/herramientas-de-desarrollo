@@ -2,7 +2,7 @@ import qrcode
 
 def generar_qr():
    
-    numero = input("Ingrese el número que desea convertir en QR: ")
+    numero = input("Ingrese número de la tarjeta: ")
 
     qr = qrcode.QRCode(
         version=1, 
