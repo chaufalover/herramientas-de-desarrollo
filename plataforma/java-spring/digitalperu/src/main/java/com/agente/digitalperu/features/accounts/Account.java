@@ -1,6 +1,4 @@
 package com.agente.digitalperu.features.accounts;
-
-import java.sql.Date;
 import java.time.LocalDate;
 
 import jakarta.persistence.Column;
@@ -72,7 +70,7 @@ public class Account {
     @Size(min = 8, message = "Password must have at least 8 characters")
     @Column(name = "account_password", nullable = false)
     private String password;
-    
+
     @PrePersist
     public void prePersist() {
         if (registrationDate == null) {
