@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiempos de Espera - Digital Perú</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-light">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 bg-dark text-white min-vh-100 p-0">
+                <div class="text-center py-4">
+                    <h4>🏛️ Digital Perú</h4>
+                </div>
+                <div class="px-3">
+                    <div class="mb-4">
+                        <h6 class="text-uppercase text-muted small">Administrador</h6>
+                        <a href="registro-usuario.html" class="text-white text-decoration-none d-block py-2">Registrar Cliente</a>
+                        <a href="tiempos-espera.html" class="text-white text-decoration-none d-block py-2 bg-primary rounded px-2">Tiempos de Espera</a>
+                        <a href="alertas-generadas.html" class="text-white text-decoration-none d-block py-2">Alertas Generadas</a>
+                    </div>
+                    <div class="mb-4">
+                        <h6 class="text-uppercase text-muted small">Usuario</h6>
+                        <a href="#" class="text-white text-decoration-none d-block py-2">Validar Identidad</a>
+                        <a href="#" class="text-white text-decoration-none d-block py-2">Operaciones</a>
+                        <a href="#" class="text-white text-decoration-none d-block py-2">Historial</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10 py-4">
+                <div class="container-fluid">
+                    <h1 class="mb-4">TIEMPOS DE ESPERA</h1>
+                    <h2 class="text-center mb-4">Bienvenido Administrador</h2>
+
+                    <!-- Botones de Filtro -->
+                    <div class="text-center mb-4">
+                        <button class="btn btn-primary btn-lg mx-2 px-5" id="btnHoy">Hoy</button>
+                        <button class="btn btn-primary btn-lg mx-2 px-5" id="btnSemanal">Semanal</button>
+                        <button class="btn btn-primary btn-lg mx-2 px-5" id="btnMensual">Mensual</button>
+                    </div>
+
+                    <!-- Gráficos -->
+                    <div class="row mb-5">
+                        <div class="col-md-6">
+                            <div class="card shadow">
+                                <div class="card-body">
+                                    <h5 class="text-center mb-3">Cantidad de Clientes Atendidos</h5>
+                                    <div style="height: 300px; position: relative;">
+                                        <canvas id="chartAlertas"></canvas>
+                                    </div>
+                                    <h3 class="text-center mt-3 fw-bold">80 Personas</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card shadow">
+                                <div class="card-body">
+                                    <h5 class="text-center mb-3">Tiempos de Espera General</h5>
+                                    <div style="height: 300px; position: relative;">
+                                        <canvas id="chartTiempos"></canvas>
+                                    </div>
+                                    <h3 class="text-center mt-3 fw-bold">32.7 Segundos</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Búsqueda de Cliente -->
+                    <div class="card shadow">
+                        <div class="card-body p-4">
+                            <div class="row align-items-center">
+                                <div class="col-md-3">
+                                    <label for="buscarCliente" class="form-label fw-bold">Cliente</label>
+                                    <input type="text" class="form-control form-control-lg" id="buscarCliente" placeholder="Buscar cliente...">
+                                </div>
+                                <div class="col-md-6 text-center">
+                                    <h4 class="mb-0">Tiempo de Espera</h4>
+                                </div>
+                                <div class="col-md-3 text-center">
+                                    <div class="bg-white border border-dark rounded p-2">
+                                        <h5 class="fs-1 mb-0">15.5</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Gráfico de Cantidad de Alertas Generadas
+        const ctxAlertas = document.getElementById('chartAlertas').getContext('2d');
+        const chartAlertas = new Chart(ctxAlertas, {
+            type: 'line',
+            data: {
+                labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+                datasets: [{
+                    label: 'Personas',
+                    data: [12, 8, 16, 12, 20, 12],
+                    borderColor: '#4CAF50',
+                    backgroundColor: [
+                        '#FFA500',
+                        '#FF0000',
+                        '#0000FF',
+                        '#FFFF00',
+                        '#4CAF50',
+                        '#00CED1'
+                    ],
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 30,
+                        ticks: {
+                            stepSize: 2
+                        }
+                    }
+                }
+            }
+        });
+
+        // Gráfico de Tiempos de las Alertas Generadas
+        const ctxTiempos = document.getElementById('chartTiempos').getContext('2d');
+        const chartTiempos = new Chart(ctxTiempos, {
+            type: 'bar',
+            data: {
+                labels: ['L', 'M', 'M', 'J', 'V', 'S'],
+                datasets: [{
+                    label: 'Segundos',
+                    data: [25, 22, 20, 18, 19, 16],
+                    backgroundColor: [
+                        '#4CAF50',
+                        '#00CED1',
+                        '#9C27B0',
+                        '#FF0000',
+                        '#FF6347',
+                        '#0000FF'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 50,
+                        ticks: {
+                            stepSize: 10
+                        }
+                    }
+                }
+            }
+        });
+
+        // Funcionalidad de los botones de filtro
+        document.getElementById('btnHoy').addEventListener('click', function() {
+            alert('Filtro: Hoy');
+        });
+
+        document.getElementById('btnSemanal').addEventListener('click', function() {
+            alert('Filtro: Semanal');
+        });
+
+        document.getElementById('btnMensual').addEventListener('click', function() {
+            alert('Filtro: Mensual');
+        });
+    </script>
+</body>
+</html>
