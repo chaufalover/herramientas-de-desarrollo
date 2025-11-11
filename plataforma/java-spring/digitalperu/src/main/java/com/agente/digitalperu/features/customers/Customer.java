@@ -18,49 +18,52 @@ import jakarta.validation.constraints.Size;
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "customer_id")
+    @Column(name = "id_customer")
     private Long id;
 
-    @Column(name = "customer_dni", length = 20, unique = true)
-    private String dni;
+    @Column(name = "customer_type", length = 20, unique = true)
+    private CustomerType customerType;
 
-    @Column(name = "customer_ruc", length = 20, unique = true)
-    private String ruc;
+    @Column(name = "document_type", length = 20, unique = true)
+    private CustomerDocument docuementType;
+
+    @Column(name = "document_number", length = 20, unique = true)
+    private String docuementNumber;
 
     @NotBlank(message = "Name is required")
-    @Column(name = "customer_name", nullable = false, length = 100)
+    @Column(name = "name", nullable = false, length = 100)
     private String name;
 
     @NotBlank(message = "Last name is required")
-    @Column(name = "customer_lastname", nullable = false, length = 100)
+    @Column(name = "lastname", nullable = false, length = 100)
     private String lastName;
 
     @Email(message = "Invalid email format")
     @NotBlank(message = "Email is required")
-    @Column(name = "customer_email", nullable = false, unique = true, length = 150)
+    @Column(name = "email", nullable = false, unique = true, length = 150)
     private String email;
 
     @Pattern(regexp = "\\d{9,15}", message = "Phone must contain only digits (9–15)")
-    @Column(name = "customer_phone", length = 15)
+    @Column(name = "phone", length = 15)
     private String phone;
 
-    @Column(name = "customer_addres", length = 255)
+    @Column(name = "addres", length = 255)
     private String addres;
 
-    @Column(name = "customer_registration_date", nullable = false)
+    @Column(name = "registration_date", nullable = false)
     private LocalDate registrationDate = LocalDate.now();
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "customer_status", nullable = false, length = 10)
+    @Column(name = "status", nullable = false, length = 10)
     private CustomerStatus status;
 
     @NotBlank
-    @Column(name = "customer_username", nullable = false, unique = true, length = 50)
+    @Column(name = "username", nullable = false, unique = true, length = 50)
     private String username;
 
     @NotBlank
     @Size(min = 8, message = "Password must have at least 8 characters")
-    @Column(name = "customer_password", nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
     @PrePersist
