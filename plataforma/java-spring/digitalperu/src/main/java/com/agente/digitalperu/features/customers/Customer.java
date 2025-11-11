@@ -53,8 +53,9 @@ public class Customer {
     @Column(name = "phone", length = 15)
     private String phone;
 
+    @NotBlank(message = "Addres is required")
     @Column(name = "addres", length = 255)
-    private String addres;
+    private String address;
 
     @Column(name = "registration_date", nullable = false)
     private LocalDate registrationDate = LocalDate.now();
