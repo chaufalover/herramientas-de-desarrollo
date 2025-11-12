@@ -21,9 +21,12 @@
                 <div class="px-3">
                     <div class="mb-4">
                         <h6 class="text-uppercase text-muted small">Administrador</h6>
-                        <a href="registro-usuario.html"
+                        <a href="customer"
                             class="text-white text-decoration-none d-block py-2 bg-primary rounded px-2">Registrar
                             Cliente</a>
+                        <a href="account"
+                            class="text-white text-decoration-none d-block py-2 bg-primary rounded px-2">Registrar
+                            cuenta</a>
                         <a href="tiempos-espera.html" class="text-white text-decoration-none d-block py-2">Tiempos de
                             Espera</a>
                         <a href="alertas-generadas.html" class="text-white text-decoration-none d-block py-2">Alertas
@@ -194,58 +197,58 @@
                                         </div>
                                     </div>
                                 </div>
-                                    <!-- Inicio de la tabla -->
-                                    <!-- Tabla -->
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered table-hover align-middle">
-                                            <thead class="table-light">
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>Tipo de cliente</th>
-                                                    <th>Tipo de documento</th>
-                                                    <th>Numero de documento</th>
-                                                    <th>Nombres</th>
-                                                    <th>Apellido</th>
-                                                    <th>Correo</th>
-                                                    <th>Telefono</th>
-                                                    <th>Direccion</th>
-                                                    <th>Fecha de Registro</th>
-                                                    <th>Estado</th>
-                                                    <th>Usuario</th>
-                                                    <th>Contraseña</th>
-                                                    <th>Acciones</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr th:each="cust : ${list}">
-                                                    <td th:text="${cust.id}"></td>
-                                                    <td th:text="${cust.customerType}"></td>
-                                                    <td th:text="${cust.docuementType}"></td>
-                                                    <td th:text="${cust.docuementNumber}"></td>
-                                                    <td th:text="${cust.name}"></td>
-                                                    <td th:text="${cust.lastName}"></td>
-                                                    <td th:text="${cust.email}"></td>
-                                                    <td th:text="${cust.phone}"></td>
-                                                    <td th:text="${cust.address}"></td>
-                                                    <td th:text="${cust.registrationDate}"></td>
-                                                    <td th:text="${cust.status}"></td>
-                                                    <td th:text="${cust.username}"></td>
-                                                    <td th:text="${cust.password}"></td>
-                                                    <td>
-                                                        <a th:href="@{/customer/edit/{id}(id=${cust.id})}"
-                                                            class="btn btn-warning"><i class="bi bi-pencil-square"></i></a>
-                                                        <form th:action="@{/customer/delete}" method="post"
-                                                            class="d-inline eliminar-form">
-                                                            <input type="hidden" name="id" th:value="${cust.id}">
-                                                            <button type="button"
-                                                                class="btn btn-danger btn-sm btn-eliminar"><i
-                                                                    class="bi bi-trash-fill"></i></i></button>
-                                                        </form>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                <!-- Inicio de la tabla -->
+                                <!-- Tabla -->
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover align-middle">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Tipo de cliente</th>
+                                                <th>Tipo de documento</th>
+                                                <th>Numero de documento</th>
+                                                <th>Nombres</th>
+                                                <th>Apellido</th>
+                                                <th>Correo</th>
+                                                <th>Telefono</th>
+                                                <th>Direccion</th>
+                                                <th>Fecha de Registro</th>
+                                                <th>Estado</th>
+                                                <th>Usuario</th>
+                                                <th>Contraseña</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="cust : ${list}">
+                                                <td th:text="${cust.id}"></td>
+                                                <td th:text="${cust.customerType}"></td>
+                                                <td th:text="${cust.docuementType}"></td>
+                                                <td th:text="${cust.docuementNumber}"></td>
+                                                <td th:text="${cust.name}"></td>
+                                                <td th:text="${cust.lastName}"></td>
+                                                <td th:text="${cust.email}"></td>
+                                                <td th:text="${cust.phone}"></td>
+                                                <td th:text="${cust.address}"></td>
+                                                <td th:text="${cust.registrationDate}"></td>
+                                                <td th:text="${cust.status}"></td>
+                                                <td th:text="${cust.username}"></td>
+                                                <td th:text="${cust.password}"></td>
+                                                <td>
+                                                    <a th:href="@{/customer/edit/{id}(id=${cust.id})}"
+                                                        class="btn btn-warning"><i class="bi bi-pencil-square"></i></a>
+                                                    <form th:action="@{/customer/delete}" method="post"
+                                                        class="d-inline eliminar-form">
+                                                        <input type="hidden" name="id" th:value="${cust.id}">
+                                                        <button type="button"
+                                                            class="btn btn-danger btn-sm btn-eliminar"><i
+                                                                class="bi bi-trash-fill"></i></i></button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                                 <!-- Fin de la tabla -->
                             </div>
                         </div>

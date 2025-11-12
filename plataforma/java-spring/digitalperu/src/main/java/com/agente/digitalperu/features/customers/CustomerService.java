@@ -1,5 +1,6 @@
 package com.agente.digitalperu.features.customers;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -25,5 +26,11 @@ public class CustomerService {
     
     public void deleteCustomer(Long id){
         customerRepository.deleteById(id);
+    }
+    public List<Customer> searchByDocumentOrName(String query) {
+        if (query == null || query.isBlank()) {
+            return Collections.emptyList();
+        }
+        return customerRepository.findTop10ByDocuementNumberContainingIgnoreCaseOrNameContainingIgnoreCase(query, query);
     }
 }

@@ -12,8 +12,202 @@
 <body class="bg-light">
     <div class="container-fluid">
         <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 bg-dark text-white min-vh-100 p-0">
+                <div class="text-center py-4">
+                    <h4>🏛️ Digital Perú</h4>
+                </div>
+                <div class="px-3">
+                    <div class="mb-4">
+                        <h6 class="text-uppercase text-muted small">Administrador</h6>
+                        <a href="customer"
+                            class="text-white text-decoration-none d-block py-2 bg-primary rounded px-2">Registrar
+                            Cliente</a>
+                        <a href="account"
+                            class="text-white text-decoration-none d-block py-2 bg-primary rounded px-2">Registrar
+                            cuenta</a>
+                        <a href="tiempos-espera.html" class="text-white text-decoration-none d-block py-2">Tiempos de
+                            Espera</a>
+                        <a href="alertas-generadas.html" class="text-white text-decoration-none d-block py-2">Alertas
+                            Generadas</a>
+                    </div>
+                    <div class="mb-4">
+                        <h6 class="text-uppercase text-muted small">Usuario</h6>
+                        <a href="#" class="text-white text-decoration-none d-block py-2">Validar Identidad</a>
+                        <a href="#" class="text-white text-decoration-none d-block py-2">Operaciones</a>
+                        <a href="#" class="text-white text-decoration-none d-block py-2">Historial</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-10 py-4">
+                <div class="container">
+                    <h1 class="mb-4">REGISTRAR CUENTA</h1>
+                    <h2 class="text-center mb-5">Bienvenido Administrador</h2>
+
+                    <div class="card shadow">
+                        <div class="card-body p-4">
+                            <div class="row">
+                                <!-- busqueda -->
+                                <form th:action="@{/account/buscar-cliente}" method="get" class="row mb-3">
+                                    <div class="col-md-6">
+                                        <input type="text" name="q" class="form-control"
+                                            placeholder="Buscar cliente por DNI o nombre" required>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="submit" class="btn btn-secondary">Buscar</button>
+                                    </div>
+                                </form>
+                                <div class="col-12 mt-2" th:if="${mensajeBusqueda}">
+                                    <div th:text="${mensajeBusqueda}"
+                                        th:classappend="${clienteSeleccionado != null} ? 'text-success' : 'text-danger'">
+                                    </div>
+                                </div>
+
+                                <!-- Formulario -->
+                                <div class="col-md-7">
+                                    <form th:action="@{/account/save}" th:object="${account}" method="post"
+                                        class="needs-validation" novalidate>
+                                        <input type="hidden" th:field="*{id}">
+                                        <!-- Cliente seleccionado  -->
+                                        <div class="mb-3" th:if="${clienteSeleccionado}">
+                                            <label class="form-label">Cliente seleccionado</label>
+                                            <input type="text" class="form-control"
+                                                th:value="${clienteSeleccionado.name + ' - ' + clienteSeleccionado.docuementNumber}"
+                                                readonly>
+                                            <input type="hidden" name="customer.id"
+                                                th:value="${clienteSeleccionado.id}">
+                                        </div>
+
+                                        <!-- Tipo de cuenta -->
+                                        <div class="mb-3">
+                                            <label for="type" class="form-label">Tipo de cuenta</label>
+                                            <select th:field="*{type.id}" id="type" class="form-select" required>
+                                                <option value="" disabled th:selected="${account.type == null}">
+                                                    Seleccionar tipo</option>
+                                                <option th:each="t : ${type}" th:value="${t.id}" th:text="${t.name}">
+                                                </option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Número de cuenta -->
+                                        <div class="mb-3">
+                                            <label for="accountNumber" class="form-label">Número de Cuenta</label>
+                                            <input type="text" th:field="*{accountNumber}" id="accountNumber"
+                                                class="form-control" placeholder="Ej: 123456789" required>
+                                            <span th:if="${#fields.hasErrors('accountNumber')}"
+                                                th:errors="*{accountNumber}" class="text-danger small"></span>
+                                        </div>
+
+                                        <!-- Monto -->
+                                        <div class="mb-3">
+                                            <label for="balance" class="form-label">Monto</label>
+                                            <input type="number" step="0.01" th:field="*{balance}" id="balance"
+                                                class="form-control" placeholder="0.00" required>
+                                            <span th:if="${#fields.hasErrors('balance')}" th:errors="*{balance}"
+                                                class="text-danger small"></span>
+                                        </div>
+
+                                        <div class="text-end">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="bi bi-save me-1"></i> Guardar Cuenta
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- Fin de formulario -->
+
+                                <!-- QR Code Display -->
+                                <div class="col-md-5">
+                                    <div class="d-flex justify-content-center align-items-center h-100">
+                                        <div class="border border-dark p-3 bg-white"
+                                            style="width: 300px; height: 300px;">
+                                            <div id="qrDisplay"
+                                                class="w-100 h-100 d-flex justify-content-center align-items-center">
+                                                <img id="qrImage" src="" alt="QR Code" class="img-fluid"
+                                                    style="display: none; max-width: 100%; max-height: 100%;">
+                                                <p class="text-muted text-center" id="qrPlaceholder">El código QR
+                                                    aparecerá aquí</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Tabla -->
+                                <div class="col-md-12 mt-5">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover align-middle">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Número de Cuenta</th>
+                                                    <th>Tipo de Cuenta</th>
+                                                    <th>Saldo</th>
+                                                    <th>Cliente</th>
+                                                    <th>DNI</th>
+                                                    <th>Fecha Apertura</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="account : ${list}">
+                                                    <td th:text="${account.id}"></td>
+                                                    <td th:text="${account.accountNumber}"></td>
+                                                    <td th:text="${account.type.name}"></td>
+                                                    <td th:text="${account.balance}"></td>
+                                                    <td
+                                                        th:text="${account.customer.name + ' ' + account.customer.lastName}">
+                                                    </td>
+                                                    <td th:text="${account.customer.docuementNumber}"></td>
+                                                    <td th:text="${account.openingDate}"></td>
+                                                    <td>
+                                                        <a th:href="@{/account/edit/{id}(id=${account.id})}"
+                                                            class="btn btn-warning btn-sm"><i
+                                                                class="bi bi-pencil-square"></i></a>
+                                                        <form th:action="@{/account/delete}" method="post"
+                                                            class="d-inline">
+                                                            <input type="hidden" name="id" th:value="${account.id}">
+                                                            <button type="submit"
+                                                                class="btn btn-danger btn-sm btn-eliminar"><i
+                                                                    class="bi bi-trash-fill"></i></button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!-- Fin de la tabla -->
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.querySelectorAll('.btn-eliminar').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const form = this.closest('form');
+                Swal.fire({
+                    title: '¿Eliminar el Cliente?',
+                    text: "Esta acción no se puede deshacer.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

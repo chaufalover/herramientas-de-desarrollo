@@ -34,7 +34,7 @@ public class Account {
 
     @ManyToOne
     @JoinColumn(name = "account_id_accountype")
-    private AccountType typeId;
+    private AccountType type;
 
     @NotNull(message = "Balance is required")
     @DecimalMin(value = "0.0", inclusive = true, message = "Balance cannot be negative")
@@ -46,6 +46,6 @@ public class Account {
 
     @ManyToOne
     @JoinColumn(name = "account_id_customer")
-    private Customer customerId;
+    private Customer customer;
 
 }

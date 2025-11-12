@@ -27,10 +27,10 @@ public class Customer {
     @Column(name = "id_customer")
     private Long id;
 
-    @Column(name = "customer_type", length = 20, unique = true)
+    @Column(name = "customer_type", length = 20)
     private CustomerType customerType;
 
-    @Column(name = "document_type", length = 20, unique = true)
+    @Column(name = "document_type", length = 20)
     private CustomerDocument docuementType;
 
     @Column(name = "document_number", length = 20, unique = true)
