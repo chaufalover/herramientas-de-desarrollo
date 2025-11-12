@@ -1,9 +1,8 @@
 import qrcode
+import io
+import base64
 
-def generar_qr():
-   
-    numero = input("Ingrese número de la tarjeta: ")
-
+def generate_qr(data: str):
     qr = qrcode.QRCode(
         version=1, 
         error_correction=qrcode.constants.ERROR_CORRECT_L, 
@@ -11,15 +10,13 @@ def generar_qr():
         border=4,  
     )
 
-    qr.add_data(numero)
+    qr.add_data(data)   
     qr.make(fit=True)
 
     img = qr.make_image(fill_color="black", back_color="white")
 
-    nombre_archivo = f"qr_{numero}.png"
-    img.save(f"/home/tom/Pictures/{nombre_archivo}")
+    buffer = io.BytesIO(); 
+    img.save(buffer, format="PNG");
+    qr_b64 = base64.b64encode(buffer.getvalue()).decode("utf-8");
 
-    print(f"\n✅ Código QR generado y guardado como: {nombre_archivo}")
-
-
-generar_qr();
+    return qr_b64;
