@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 
-<head th:replace="~{admin/fragments/fragmento :: head('Historial de Transferencias - Digital Perú')}"></head>
+<head th:replace="~{admin/fragments/fragmento :: head('Historial de Retiros - Digital Perú')}"></head>
 
 <body class="bg-light">
     <div class="container-fluid">
@@ -14,7 +14,7 @@
             <!-- Main Content -->
             <div class="col-md-10 py-4">
                 <div class="container-fluid">
-                    <h1 class="mb-4">Historial - Transferencias</h1>
+                    <h1 class="mb-4">Historial - Retiros</h1>
                     <h2 class="text-center mb-5">BIENVENIDO USUARIO</h2>
 
                     <!-- Filtros -->
@@ -31,12 +31,17 @@
                                     <input type="number" class="form-control" id="filtroMonto" placeholder="Buscar por monto" step="0.01">
                                 </div>
                                 <div class="col-md-3">
-                                    <label for="filtroCuentaOrigen" class="form-label">Cuenta Origen</label>
-                                    <input type="text" class="form-control" id="filtroCuentaOrigen" placeholder="Buscar por origen">
+                                    <label for="filtroCuenta" class="form-label">Número de Cuenta</label>
+                                    <input type="text" class="form-control" id="filtroCuenta" placeholder="Buscar por cuenta">
                                 </div>
                                 <div class="col-md-2">
-                                    <label for="filtroCuentaDestino" class="form-label">Cuenta Destino</label>
-                                    <input type="text" class="form-control" id="filtroCuentaDestino" placeholder="Buscar por destino">
+                                    <label for="filtroTipoCuenta" class="form-label">Tipo de Cuenta</label>
+                                    <select class="form-select" id="filtroTipoCuenta">
+                                        <option value="">Todos</option>
+                                        <option value="ahorros">Ahorros</option>
+                                        <option value="corriente">Corriente</option>
+                                        <option value="inversion">Inversión</option>
+                                    </select>
                                 </div>
                                 <div class="col-md-2 d-flex align-items-end">
                                     <button class="btn btn-primary w-100" id="btnFiltrar">Filtrar</button>
@@ -45,7 +50,7 @@
                         </div>
                     </div>
 
-                    <!-- Tabla de Transferencias -->
+                    <!-- Tabla de Retiros -->
                     <div class="card shadow">
                         <div class="card-body">
                             <div class="table-responsive">
@@ -54,75 +59,75 @@
                                         <tr>
                                             <th>ID</th>
                                             <th>Fecha</th>
-                                            <th>Cuenta Origen</th>
-                                            <th>Cuenta Destino</th>
+                                            <th>Número de Cuenta</th>
+                                            <th>Tipo de Cuenta</th>
                                             <th>Monto</th>
                                             <th>Estado</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="tablaTransferencias">
+                                    <tbody id="tablaRetiros">
                                         <tr>
                                             <td>001</td>
                                             <td>2024-11-10</td>
                                             <td>1234567890</td>
-                                            <td>0987654321</td>
-                                            <td>S/ 1,000.00</td>
+                                            <td>Ahorros</td>
+                                            <td>S/ 500.00</td>
                                             <td><span class="badge bg-success">Completado</span></td>
                                         </tr>
                                         <tr>
                                             <td>002</td>
                                             <td>2024-11-09</td>
                                             <td>0987654321</td>
-                                            <td>1122334455</td>
-                                            <td>S/ 2,500.00</td>
+                                            <td>Corriente</td>
+                                            <td>S/ 1,200.00</td>
                                             <td><span class="badge bg-success">Completado</span></td>
                                         </tr>
                                         <tr>
                                             <td>003</td>
                                             <td>2024-11-08</td>
                                             <td>1122334455</td>
-                                            <td>5544332211</td>
-                                            <td>S/ 750.50</td>
+                                            <td>Inversión</td>
+                                            <td>S/ 3,000.00</td>
                                             <td><span class="badge bg-success">Completado</span></td>
                                         </tr>
                                         <tr>
                                             <td>004</td>
                                             <td>2024-11-07</td>
                                             <td>5544332211</td>
-                                            <td>6677889900</td>
-                                            <td>S/ 3,200.00</td>
+                                            <td>Ahorros</td>
+                                            <td>S/ 750.50</td>
                                             <td><span class="badge bg-warning">Pendiente</span></td>
                                         </tr>
                                         <tr>
                                             <td>005</td>
                                             <td>2024-11-06</td>
                                             <td>6677889900</td>
-                                            <td>9988776655</td>
-                                            <td>S/ 1,800.00</td>
+                                            <td>Corriente</td>
+                                            <td>S/ 2,100.00</td>
                                             <td><span class="badge bg-success">Completado</span></td>
                                         </tr>
                                         <tr>
                                             <td>006</td>
                                             <td>2024-11-05</td>
                                             <td>9988776655</td>
-                                            <td>1357924680</td>
-                                            <td>S/ 4,500.00</td>
+                                            <td>Ahorros</td>
+                                            <td>S/ 900.00</td>
                                             <td><span class="badge bg-success">Completado</span></td>
                                         </tr>
                                         <tr>
                                             <td>007</td>
                                             <td>2024-11-04</td>
                                             <td>1357924680</td>
-                                            <td>2468013579</td>
-                                            <td>S/ 950.75</td>
+                                            <td>Inversión</td>
+                                            <td>S/ 5,000.00</td>
                                             <td><span class="badge bg-success">Completado</span></td>
                                         </tr>
                                         <tr>
                                             <td>008</td>
                                             <td>2024-11-03</td>
                                             <td>2468013579</td>
-                                            <td>1234567890</td>
-                                            <td>S/ 2,100.00</td>
+                                            <td>Corriente</td>
+                                            <td>S/ 1,500.00</td>
                                             <td><span class="badge bg-success">Completado</span></td>
                                         </tr>
                                     </tbody>
@@ -146,6 +151,8 @@
                             </nav>
                         </div>
                     </div>
+                    <!-- Alerta de Tiempo -->
+                    <div th:replace="~{user/fragments/time-alert :: time-alert}"></div>
                 </div>
             </div>
         </div>
@@ -157,10 +164,10 @@
         document.getElementById('btnFiltrar').addEventListener('click', function() {
             const fecha = document.getElementById('filtroFecha').value;
             const monto = document.getElementById('filtroMonto').value;
-            const cuentaOrigen = document.getElementById('filtroCuentaOrigen').value;
-            const cuentaDestino = document.getElementById('filtroCuentaDestino').value;
+            const cuenta = document.getElementById('filtroCuenta').value;
+            const tipoCuenta = document.getElementById('filtroTipoCuenta').value;
             
-            console.log('Filtrando por:', { fecha, monto, cuentaOrigen, cuentaDestino });
+            console.log('Filtrando por:', { fecha, monto, cuenta, tipoCuenta });
             alert('Filtros aplicados. Esta funcionalidad se puede expandir según necesidades.');
         });
     </script>
