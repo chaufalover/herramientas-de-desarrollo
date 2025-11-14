@@ -33,9 +33,7 @@ public class CustomerController {
             model.addAttribute("list", customerService.getAllCustomer());
             return "admin/registro-usuario";
         }
-       
-        
-        customerService.updateAddCustomer(customer);
+        customerService.addUser(customer);
         return "redirect:/customer";
     }
      @GetMapping("/edit/{id}")

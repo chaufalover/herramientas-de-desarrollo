@@ -1,10 +1,9 @@
 package com.agente.digitalperu.features.accounts;
 
 import java.util.List;
-
 import org.springframework.stereotype.Service;
-
 import com.agente.digitalperu.features.accountType.AccountTypeRepository;
+import com.agente.digitalperu.features.customers.Customer;
 import com.agente.digitalperu.features.customers.CustomerRepository;
 
 import jakarta.transaction.Transactional;
@@ -12,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-
 public class AccountService {
     private final AccountRepository accountRepository;
     private final CustomerRepository customerRepository;
@@ -49,4 +47,12 @@ public class AccountService {
     public void deleteAccount(Long id) {
         accountRepository.deleteById(id);
     }
+
+    //inicio de sesion con qr n contraseña:b
+    public Customer getAccountNumber(String accountNumber){
+        return accountRepository.findByAccountNumber(accountNumber)
+            .map(Account::getCustomer)
+            .orElse(null);
+    }
+
 }

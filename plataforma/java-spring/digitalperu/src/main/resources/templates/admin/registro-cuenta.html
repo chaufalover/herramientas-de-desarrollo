@@ -143,6 +143,51 @@
             </div>
         </div>
     </div>
+    <!-- Modal del Código QR -->
+    <div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow-lg border-0 rounded-4">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="qrModalLabel">
+                        <i class="bi bi-qr-code"></i> Código QR de la cuenta
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Cerrar"></button>
+                </div>
+
+                <div class="modal-body text-center">
+                    <p class="text-muted mb-3">Este es el código QR asociado a tu cuenta.</p>
+
+                    <img id="qrModalImg" th:src="'data:image/png;base64,' + ${qr_image}" alt="Código QR"
+                        class="img-fluid border rounded p-2 shadow-sm" style="max-width: 280px;" />
+                </div>
+
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Cerrar
+                    </button>
+
+                    <a id="downloadQrBtn" th:href="'data:image/png;base64,' + ${qr_image}"
+                        download="codigo_qr_cuenta.png" class="btn btn-primary">
+                        <i class="bi bi-download"></i> Descargar QR
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const qrImg = document.getElementById("qrModalImg");
+            if (qrImg && qrImg.src.includes("base64")) {
+                const modal = new bootstrap.Modal(document.getElementById('qrModal'));
+                modal.show();
+            }
+        });
+    </script>
+
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
