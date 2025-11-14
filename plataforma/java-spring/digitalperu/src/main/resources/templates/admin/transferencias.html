@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operaciones - Transferencia - Banco</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<head th:replace="~{admin/fragments/fragmento :: head('Transferencias - Digital Perú')}"></head>
+
+<body class="bg-light">
+    <div class="container-fluid">
+        <div class="row">
+
+            <!-- Sidebar -->
+            <div class="col-md-2 bg-dark text-white min-vh-100 p-0">
+                <div th:replace="~{admin/fragments/fragmento :: navigator}"></div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10 py-4">
+                <div class="container">
+                    <h1 class="mb-4">Operaciones - Transferencia</h1>
+                    <h2 class="text-center mb-5">BIENVENIDO USUARIO</h2>
+
+                    <!-- Formulario de Transferencia -->
+                    <div class="card shadow">
+                        <div class="card-body p-5">
+                            <h3 class="mb-4">Transferencia</h3>
+                            
+                            <form>
+                                <div class="row mb-4">
+                                    <div class="col-md-4">
+                                        <label for="cuentaOrigen" class="form-label">Número de Cuenta de Origen</label>
+                                        <input type="number" class="form-control form-control-lg" id="cuentaOrigen" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="cuentaDestino" class="form-label">Número de Cuenta de Destino</label>
+                                        <input type="number" class="form-control form-control-lg" id="cuentaDestino" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="monto" class="form-label">Monto</label>
+                                        <input type="number" class="form-control form-control-lg" id="monto" step="0.01" required>
+                                    </div>
+                                </div>
+
+                                <div class="text-center mt-5">
+                                    <button type="submit" class="btn btn-primary btn-lg px-5 py-3">Transferir</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Alerta de Tiempo -->
+                    <div th:replace="~{admin/fragments/fragmento :: time-alert}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
