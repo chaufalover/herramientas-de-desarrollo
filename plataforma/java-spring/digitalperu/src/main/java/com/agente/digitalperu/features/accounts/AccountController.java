@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.agente.digitalperu.features.accountType.AccountTypeService;
 import com.agente.digitalperu.features.customers.CustomerService;
+import com.agente.digitalperu.features.qr.QrService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class AccountController {
     private final AccountService accountService;
     private final AccountTypeService accountTypeService;
     private final CustomerService customerService;
+    private final QrService qrService;
 
     @GetMapping
     public String ListAccount(Model model) {
@@ -43,22 +45,22 @@ public class AccountController {
         }
 
         try {
-            accountService.updateAddAccount(account);
-        } catch (IllegalArgumentException e) {
+            // guardar y usar el objeto persistido para generar el QR
+            var savedAccount = accountService.updateAddAccount(account);
+            String qrImage = qrService.generateQr(savedAccount.getAccountNumber());
 
+            model.addAttribute("qr_image", qrImage);
+            model.addAttribute("success", "Cuenta registrada correctamente");
+
+        } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("list", accountService.getAllAccount());
             model.addAttribute("type", accountTypeService.getAllAccountType());
             model.addAttribute("account", account);
-            
-            if (account.getCustomer() != null && account.getCustomer().getId() != null) {
-                model.addAttribute("clienteSeleccionado", account.getCustomer());
-            }
-
             return "admin/registro-cuenta";
         }
 
-        return "redirect:/account";
+        return "admin/registro-cuenta";
     }
 
     @GetMapping("/edit/{id}")
@@ -116,4 +118,5 @@ public class AccountController {
 
         return "admin/registro-cuenta";
     }
+
 }
