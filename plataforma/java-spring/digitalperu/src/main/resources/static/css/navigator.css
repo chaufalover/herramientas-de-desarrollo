@@ -1,0 +1,273 @@
+/* Estilos del Sidebar */
+.sidebar {
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/* Prevenir parpadeo durante la carga */
+.col-md-2.bg-dark {
+    transition: none !important;
+}
+
+.col-md-2.bg-dark.sidebar {
+    transition: all 0.3s ease;
+}
+
+.sidebar.collapsed {
+    width: 80px !important;
+    min-width: 80px !important;
+    max-width: 80px !important;
+}
+
+.sidebar.collapsed .sidebar-text {
+    display: none;
+}
+
+.sidebar.collapsed .text-center h4 {
+    font-size: 1.5rem;
+}
+
+/* Estilos para los enlaces de navegación */
+.nav-link-custom {
+    transition: all 0.2s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.nav-link-custom:hover {
+    background-color: rgba(13, 110, 253, 0.8) !important;
+    border-radius: 0.25rem;
+    padding-left: 1rem !important;
+    transform: translateX(3px);
+}
+
+.nav-link-custom.active {
+    background-color: #0d6efd !important;
+    border-radius: 0.25rem;
+}
+
+/* Botón de colapsar/expandir */
+.toggle-btn {
+    position: absolute;
+    top: 10px;
+    right: -15px;
+    z-index: 1000;
+    background-color: #0d6efd;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-btn:hover {
+    background-color: #0b5ed7;
+    transform: scale(1.1);
+}
+
+.toggle-btn i {
+    color: white;
+    font-size: 0.9rem;
+    transition: transform 0.3s ease;
+}
+
+.sidebar.collapsed .toggle-btn i {
+    transform: rotate(180deg);
+}
+
+/* Títulos de sección */
+.section-title {
+    transition: opacity 0.3s ease;
+}
+
+.sidebar.collapsed .section-title {
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+    margin: 0;
+}
+
+/* Contenido principal */
+.main-content {
+    transition: all 0.3s ease;
+}
+
+/* Ajustes para iconos cuando está colapsado */
+.sidebar.collapsed .nav-link-custom {
+    text-align: center;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+}
+
+.sidebar.collapsed .nav-link-custom i {
+    margin-right: 0 !important;
+}
+
+/* Animación suave para el ícono */
+.sidebar.collapsed .sidebar-icon {
+    display: inline-block !important;
+}
+
+.sidebar:not(.collapsed) .sidebar-icon {
+    display: none !important;
+}
+
+/* Mejoras visuales adicionales */
+.nav-link-custom:active {
+    transform: scale(0.98);
+}
+
+.sidebar {
+    overflow-x: hidden;
+}
+
+/* Efecto de resplandor en hover */
+.nav-link-custom:hover::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 3px;
+    background-color: #ffffff;
+    opacity: 0.8;
+}
+
+.nav-link-custom.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 3px;
+    background-color: #ffffff;
+}
+
+/* ===== ESTILOS DEL DROPDOWN ===== */
+
+/* Contenedor del dropdown */
+.nav-dropdown {
+    position: relative;
+}
+
+/* Flecha del dropdown */
+.dropdown-arrow {
+    position: absolute;
+    right: 10px;
+    transition: transform 0.3s ease;
+    font-size: 0.8rem;
+}
+
+.nav-dropdown.active .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+/* Submenú */
+.dropdown-submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, opacity 0.3s ease;
+    opacity: 0;
+}
+
+.nav-dropdown.active .dropdown-submenu {
+    max-height: 200px;
+    opacity: 1;
+}
+
+/* Enlaces del submenú */
+.nav-link-sub {
+    font-size: 0.9rem;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.nav-link-sub:hover {
+    background-color: rgba(13, 110, 253, 0.6) !important;
+    padding-left: 1.5rem !important;
+}
+
+/* ===== ESTILOS PARA SIDEBAR COLAPSADO ===== */
+
+/* Cuando está colapsado, ocultar la flecha */
+.sidebar.collapsed .dropdown-arrow {
+    display: none;
+}
+
+/* Contenedor del dropdown debe tener position relative */
+.sidebar.collapsed .nav-dropdown {
+    position: relative;
+}
+
+/* Submenú lateral cuando está colapsado */
+.sidebar.collapsed .dropdown-submenu {
+    position: fixed;
+    left: 80px;
+    min-width: 220px;
+    background-color: #212529;
+    border-radius: 0.25rem;
+    box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.5);
+    padding: 0.5rem 0;
+    z-index: 9999;
+    max-height: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    margin-left: 5px;
+    border-left: 3px solid #0d6efd;
+}
+
+/* Mostrar submenú lateral en hover cuando está colapsado */
+.sidebar.collapsed .nav-dropdown:hover .dropdown-submenu {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Ajustar padding de los enlaces cuando está colapsado */
+.sidebar.collapsed .nav-link-sub {
+    padding-left: 1rem !important;
+    text-align: left;
+}
+
+.sidebar.collapsed .nav-link-sub i {
+    margin-right: 0.5rem !important;
+}
+
+/* Asegurar que el texto sea visible en el menú lateral */
+.sidebar.collapsed .dropdown-submenu .sidebar-text {
+    display: inline !important;
+}
+
+/* Prevenir que el hover del link principal afecte cuando está colapsado */
+.sidebar.collapsed .nav-dropdown > .nav-link-custom {
+    cursor: pointer;
+}
+
+/* Ajustar hover en sidebar colapsado */
+.sidebar.collapsed .nav-dropdown:hover > .nav-link-custom {
+    background-color: rgba(13, 110, 253, 0.8) !important;
+}
+
+/* Animación suave para el submenú lateral */
+.sidebar.collapsed .dropdown-submenu {
+    animation: none;
+}
+
+.sidebar.collapsed .nav-dropdown:hover .dropdown-submenu {
+    animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

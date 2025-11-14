@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head th:replace="~{admin/fragments/fragmento :: head('Operaciones - Digital Perú')}"></head>
+
+<body class="bg-light">
+    <div class="container-fluid">
+        <div class="row">
+            
+            <!-- Sidebar -->
+            <div class="col-md-2 bg-dark text-white min-vh-100 p-0">
+                <div th:replace="~{admin/fragments/fragmento :: navigator}"></div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10 py-4">
+                <div class="container">
+                    <h1 class="mb-4">Operaciones</h1>
+                    <h2 class="text-center mb-4">BIENVENIDO USUARIO</h2>
+                    <h3 class="text-center mb-5">Eliga su Operación</h3>
+
+                    <!-- Botones de Operaciones -->
+                    <div class="d-flex justify-content-center gap-4 mb-5">
+                        <button class="btn btn-primary btn-lg px-5 py-3 fs-4" style="min-width: 200px;"><a href="depositos.html" class="text-white text-decoration-none">Depósitos</a></button>
+                        <button class="btn btn-primary btn-lg px-5 py-3 fs-4" style="min-width: 200px;"><a href="retiros.html" class="text-white text-decoration-none">Retiros</a></button>
+                        <button class="btn btn-primary btn-lg px-5 py-3 fs-4" style="min-width: 200px;"><a href="transferencias.html" class="text-white text-decoration-none">Transferencia</a></button>
+                    </div>
+
+                    <!-- Alerta de Tiempo -->
+                    <div th:replace="~{user/fragments/time-alert :: time-alert}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

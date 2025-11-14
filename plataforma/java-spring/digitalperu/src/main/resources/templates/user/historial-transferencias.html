@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head th:replace="~{admin/fragments/fragmento :: head('Historial de Transferencias - Digital Perú')}"></head>
+
+<body class="bg-light">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 bg-dark text-white min-vh-100 p-0">
+                <div th:replace="~{admin/fragments/fragmento :: navigator}"></div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10 py-4">
+                <div class="container-fluid">
+                    <h1 class="mb-4">Historial - Transferencias</h1>
+                    <h2 class="text-center mb-5">BIENVENIDO USUARIO</h2>
+
+                    <!-- Filtros -->
+                    <div class="card shadow mb-4">
+                        <div class="card-body">
+                            <h5 class="mb-3">Filtros de Búsqueda</h5>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label for="filtroFecha" class="form-label">Fecha</label>
+                                    <input type="date" class="form-control" id="filtroFecha">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="filtroMonto" class="form-label">Monto</label>
+                                    <input type="number" class="form-control" id="filtroMonto" placeholder="Buscar por monto" step="0.01">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="filtroCuentaOrigen" class="form-label">Cuenta Origen</label>
+                                    <input type="text" class="form-control" id="filtroCuentaOrigen" placeholder="Buscar por origen">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="filtroCuentaDestino" class="form-label">Cuenta Destino</label>
+                                    <input type="text" class="form-control" id="filtroCuentaDestino" placeholder="Buscar por destino">
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button class="btn btn-primary w-100" id="btnFiltrar">Filtrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de Transferencias -->
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-striped">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Fecha</th>
+                                            <th>Cuenta Origen</th>
+                                            <th>Cuenta Destino</th>
+                                            <th>Monto</th>
+                                            <th>Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tablaTransferencias">
+                                        <tr>
+                                            <td>001</td>
+                                            <td>2024-11-10</td>
+                                            <td>1234567890</td>
+                                            <td>0987654321</td>
+                                            <td>S/ 1,000.00</td>
+                                            <td><span class="badge bg-success">Completado</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>002</td>
+                                            <td>2024-11-09</td>
+                                            <td>0987654321</td>
+                                            <td>1122334455</td>
+                                            <td>S/ 2,500.00</td>
+                                            <td><span class="badge bg-success">Completado</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>003</td>
+                                            <td>2024-11-08</td>
+                                            <td>1122334455</td>
+                                            <td>5544332211</td>
+                                            <td>S/ 750.50</td>
+                                            <td><span class="badge bg-success">Completado</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>004</td>
+                                            <td>2024-11-07</td>
+                                            <td>5544332211</td>
+                                            <td>6677889900</td>
+                                            <td>S/ 3,200.00</td>
+                                            <td><span class="badge bg-warning">Pendiente</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>005</td>
+                                            <td>2024-11-06</td>
+                                            <td>6677889900</td>
+                                            <td>9988776655</td>
+                                            <td>S/ 1,800.00</td>
+                                            <td><span class="badge bg-success">Completado</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>006</td>
+                                            <td>2024-11-05</td>
+                                            <td>9988776655</td>
+                                            <td>1357924680</td>
+                                            <td>S/ 4,500.00</td>
+                                            <td><span class="badge bg-success">Completado</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>007</td>
+                                            <td>2024-11-04</td>
+                                            <td>1357924680</td>
+                                            <td>2468013579</td>
+                                            <td>S/ 950.75</td>
+                                            <td><span class="badge bg-success">Completado</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>008</td>
+                                            <td>2024-11-03</td>
+                                            <td>2468013579</td>
+                                            <td>1234567890</td>
+                                            <td>S/ 2,100.00</td>
+                                            <td><span class="badge bg-success">Completado</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Paginación -->
+                            <nav aria-label="Paginación de tabla">
+                                <ul class="pagination justify-content-center mt-4">
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="#" tabindex="-1">Anterior</a>
+                                    </li>
+                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">4</a></li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#">Siguiente</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                    <!-- Alerta de Tiempo -->
+                    <div th:replace="~{user/fragments/time-alert :: time-alert}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Funcionalidad de filtrado
+        document.getElementById('btnFiltrar').addEventListener('click', function() {
+            const fecha = document.getElementById('filtroFecha').value;
+            const monto = document.getElementById('filtroMonto').value;
+            const cuentaOrigen = document.getElementById('filtroCuentaOrigen').value;
+            const cuentaDestino = document.getElementById('filtroCuentaDestino').value;
+            
+            console.log('Filtrando por:', { fecha, monto, cuentaOrigen, cuentaDestino });
+            alert('Filtros aplicados. Esta funcionalidad se puede expandir según necesidades.');
+        });
+    </script>
+</body>
+</html>

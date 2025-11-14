@@ -1,0 +1,117 @@
+<div th:fragment="navigator">
+    <button class="toggle-btn" onclick="toggleSidebar()">
+        <i class="bi bi-chevron-left"></i>
+    </button>
+    
+    <div class="text-center py-4">
+        <h4><span class="sidebar-text">🏛️ Digital Perú</span><span class="d-none sidebar-icon">🏛️</span></h4>
+    </div>
+    
+    <div class="px-3">
+        <div class="mb-4">
+            <h6 class="text-uppercase text-muted small section-title">Administrador</h6>
+            <a href="customer" 
+               class="nav-link-custom text-white text-decoration-none d-block py-2 px-2"
+               data-page="customer">
+                <i class="bi bi-person-plus-fill me-2"></i>
+                <span class="sidebar-text">Registrar Usuario</span>
+            </a>
+            <a href="account" 
+               class="nav-link-custom text-white text-decoration-none d-block py-2 px-2"
+               data-page="account">
+                <i class="bi bi-bank me-2"></i>
+                <span class="sidebar-text">Registrar Cuenta</span>
+            </a>
+            <a href="tiempos-espera.html" 
+               class="nav-link-custom text-white text-decoration-none d-block py-2 px-2"
+               data-page="tiempos-espera">
+                <i class="bi bi-clock-history me-2"></i>
+                <span class="sidebar-text">Tiempos de Espera</span>
+            </a>
+            <a href="alertas-generadas.html" 
+               class="nav-link-custom text-white text-decoration-none d-block py-2 px-2"
+               data-page="alertas-generadas">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span class="sidebar-text">Alertas Generadas</span>
+            </a>
+        </div>
+        
+        <div class="mb-4">
+            <h6 class="text-uppercase text-muted small section-title">Usuario</h6>
+            <a href="#" 
+               class="nav-link-custom text-white text-decoration-none d-block py-2 px-2"
+               data-page="validar-identidad">
+                <i class="bi bi-shield-check me-2"></i>
+                <span class="sidebar-text">Validar Identidad</span>
+            </a>
+            
+            <!-- Menú desplegable de Operaciones -->
+            <div class="nav-dropdown">
+                <a href="#" 
+                   class="nav-link-custom text-white text-decoration-none d-block py-2 px-2"
+                   data-page="operaciones"
+                   onclick="toggleDropdown(event)">
+                    <i class="bi bi-cash-stack me-2"></i>
+                    <span class="sidebar-text">Operaciones</span>
+                    <i class="bi bi-chevron-down dropdown-arrow sidebar-text"></i>
+                </a>
+                
+                <!-- Submenú -->
+                <div class="dropdown-submenu">
+                    <a href="depositos.html" 
+                       class="nav-link-custom nav-link-sub text-white text-decoration-none d-block py-2 px-2 ps-4"
+                       data-page="depositos">
+                        <i class="bi bi-arrow-down-circle me-2"></i>
+                        <span class="sidebar-text">Depósitos</span>
+                    </a>
+                    <a href="retiros.html" 
+                       class="nav-link-custom nav-link-sub text-white text-decoration-none d-block py-2 px-2 ps-4"
+                       data-page="retiros">
+                        <i class="bi bi-arrow-up-circle me-2"></i>
+                        <span class="sidebar-text">Retiros</span>
+                    </a>
+                    <a href="transferencias.html" 
+                       class="nav-link-custom nav-link-sub text-white text-decoration-none d-block py-2 px-2 ps-4"
+                       data-page="transferencias">
+                        <i class="bi bi-arrow-left-right me-2"></i>
+                        <span class="sidebar-text">Transferencia</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Menú desplegable de Historial -->
+            <div class="nav-dropdown">
+                <a href="#" 
+                   class="nav-link-custom text-white text-decoration-none d-block py-2 px-2"
+                   data-page="historial"
+                   onclick="toggleDropdown(event)">
+                    <i class="bi bi-clock-history me-2"></i>
+                    <span class="sidebar-text">Historial</span>
+                    <i class="bi bi-chevron-down dropdown-arrow sidebar-text"></i>
+                </a>
+                
+                <!-- Submenú -->
+                <div class="dropdown-submenu">
+                    <a href="historial-depositos.html" 
+                       class="nav-link-custom nav-link-sub text-white text-decoration-none d-block py-2 px-2 ps-4"
+                       data-page="historial-depositos">
+                        <i class="bi bi-arrow-down-circle me-2"></i>
+                        <span class="sidebar-text">Historial de Depósitos</span>
+                    </a>
+                    <a href="historial-retiros.html" 
+                       class="nav-link-custom nav-link-sub text-white text-decoration-none d-block py-2 px-2 ps-4"
+                       data-page="historial-retiros">
+                        <i class="bi bi-arrow-up-circle me-2"></i>
+                        <span class="sidebar-text">Historial de Retiros</span>
+                    </a>
+                    <a href="historial-transferencias.html" 
+                       class="nav-link-custom nav-link-sub text-white text-decoration-none d-block py-2 px-2 ps-4"
+                       data-page="historial-transferencias">
+                        <i class="bi bi-arrow-left-right me-2"></i>
+                        <span class="sidebar-text">Historial de Transferencias</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
