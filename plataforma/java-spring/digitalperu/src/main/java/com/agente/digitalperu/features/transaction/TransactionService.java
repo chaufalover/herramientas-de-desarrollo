@@ -7,20 +7,17 @@ import org.springframework.stereotype.Service;
 
 import com.agente.digitalperu.features.accounts.Account;
 import com.agente.digitalperu.features.accounts.AccountRepository;
-import com.agente.digitalperu.features.transactionType.TransactionType;
-import com.agente.digitalperu.features.transactionType.TransactionTypeRepository;
+import com.agente.digitalperu.util.TransactionEnum;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-
 public class TransactionService {
 
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
-    private final TransactionTypeRepository transactionTypeRepository;
 
     @Transactional
     public Transaction transfer(String originNumber, String destinationNumber, BigDecimal amount) {
@@ -50,14 +47,12 @@ public class TransactionService {
 
         accountRepository.save(origin);
         accountRepository.save(destination);
-        TransactionType type = transactionTypeRepository.findByName("TRANSFER")
-                .orElseThrow(() -> new RuntimeException("Transaction type TRANSFER not found"));
 
         Transaction tx = new Transaction();
         tx.setOriginAccount(origin);
         tx.setDestinationAccount(destination);
         tx.setAmount(amount);
-        tx.setTransactionType(type);
+        tx.setTransactionType(TransactionEnum.TRANSFER);
         tx.setTransactionDate(LocalDate.now());
 
         return transactionRepository.save(tx);

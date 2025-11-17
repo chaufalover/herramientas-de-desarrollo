@@ -1,19 +1,24 @@
 <!DOCTYPE html>
 <html lang="es">
 
-<head th:replace="~{admin/fragments/fragmento :: head('Operaciones - Digital Perú')}"></head>
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
 
 <body class="bg-light">
     <div class="container-fluid">
         <div class="row">
-            
-            <!-- Sidebar -->
-            <div class="col-md-2 bg-dark text-white min-vh-100 p-0">
-                <div th:replace="~{admin/fragments/fragmento :: navigator}"></div>
-            </div>
 
             <!-- Main Content -->
             <div class="col-md-10 py-4">
+                <div class="container">
+                    <form th:action="@{/logout}" method="post">
+                        <input type="submit" value="Logout" class="btn btn-danger" />
+                    </form>
+                </div>
                 <div class="container">
                     <h1 class="mb-4">Operaciones</h1>
                     <h2 class="text-center mb-4">BIENVENIDO USUARIO</h2>
@@ -21,11 +26,33 @@
 
                     <!-- Botones de Operaciones -->
                     <div class="d-flex justify-content-center gap-4 mb-5">
-                        <button class="btn btn-primary btn-lg px-5 py-3 fs-4" style="min-width: 200px;"><a href="depositos.html" class="text-white text-decoration-none">Depósitos</a></button>
-                        <button class="btn btn-primary btn-lg px-5 py-3 fs-4" style="min-width: 200px;"><a href="retiros.html" class="text-white text-decoration-none">Retiros</a></button>
-                        <button class="btn btn-primary btn-lg px-5 py-3 fs-4" style="min-width: 200px;"><a href="transferencias.html" class="text-white text-decoration-none">Transferencia</a></button>
+                        <button class="btn btn-primary btn-lg px-5 py-3 fs-4" style="min-width: 200px;"><a
+                                href="/transactions/deposit"
+                                class="text-white text-decoration-none">Depósitos</a></button>
+                        <button class="btn btn-primary btn-lg px-5 py-3 fs-4" style="min-width: 200px;"><a
+                                href="/transactions/retirement"
+                                class="text-white text-decoration-none">Retiros</a></button>
+                        <button class="btn btn-primary btn-lg px-5 py-3 fs-4" style="min-width: 200px;"><a
+                                href="transferencias.html"
+                                class="text-white text-decoration-none">Transferencia</a></button>
                     </div>
 
+                    <div class="container mt-4">
+                        <h5 class="mb-3">Mis cuentas</h5>
+                        <div class="row">
+                            <div class="col-12" th:if="${accounts == null or #lists.isEmpty(accounts)}">
+                                <p class="text-muted">No hay cuentas</p>
+                            </div>
+                            <div class="col-md-6 mb-2" th:each="acc : ${accounts}">
+
+
+                                <h6 th:text="${acc.type != null ? acc.type.name : 'Cuenta'}">Cuenta</h6>
+                                <p class="mb-0">Número: <span th:text="${acc.accountNumber}">0000</span></p>
+                                <p class="mb-0">Saldo: S/ <span th:text="${acc.balance}">0.00</span></p>
+
+                            </div>
+                        </div>
+                    </div>
                     <!-- Alerta de Tiempo -->
                     <div th:replace="~{user/fragments/time-alert :: time-alert}"></div>
                 </div>
@@ -35,4 +62,5 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

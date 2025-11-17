@@ -40,7 +40,12 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .permitAll());
+                            .loginProcessingUrl("/log-in")
+                            .defaultSuccessUrl("/operations", true)
+                            .failureUrl("/log-in?errors")
+                            .permitAll())
+                        .logout().logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout");
         return http.build();
     }
 

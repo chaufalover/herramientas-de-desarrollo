@@ -98,8 +98,7 @@
         try { body = await res.json(); } catch (e) { }
 
         if (res.ok) {
-          alert("Inicio de sesión exitoso");
-          //window.location.href = "/";
+          window.location.href = "/transactions";
         } else {
           alert(body.mensaje || "Credenciales inválidas");
         }

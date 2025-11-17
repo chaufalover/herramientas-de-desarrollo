@@ -4,21 +4,27 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import com.agente.digitalperu.features.accounts.Account;
-import com.agente.digitalperu.features.transactionType.TransactionType;
+import com.agente.digitalperu.util.TransactionEnum;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.DecimalMin;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class Transaction {
     @Id
@@ -34,9 +40,9 @@ public class Transaction {
     @JoinColumn(name = "id_account_destination", nullable = false)
     private Account destinationAccount;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "id_transaction_type", nullable = false)
-    private TransactionType transactionType;
+    @Enumerated(EnumType.STRING)
+    private TransactionEnum transactionType;
+
     @DecimalMin(value = "0.0", inclusive = true, message = "Balance cannot be negative")
     @Column(name = "amount", nullable = false, precision = 15, scale = 2)
     private BigDecimal amount;
