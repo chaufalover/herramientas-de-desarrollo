@@ -1,10 +1,15 @@
 package com.agente.digitalperu.features.qr;
 
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -71,6 +76,12 @@ public class LoginQrController {
 
             if (stored != null && passwordEncoder.matches(password, stored)) {
                 log.info("Password válida para customerId={}", customerId);
+                // crear Authentication simple (puedes usar ROLE_USER)
+                var authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
+                var auth = new UsernamePasswordAuthenticationToken(customer.getUsername(), null, authorities);
+                SecurityContextHolder.getContext().setAuthentication(auth);
+                // guardar SecurityContext en la sesión para que Spring Security lo reconozca
+                session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
                 session.setAttribute("customerId", customerId);
                 return ResponseEntity.ok(Map.of("mensaje", "Autenticado"));
             } else {
