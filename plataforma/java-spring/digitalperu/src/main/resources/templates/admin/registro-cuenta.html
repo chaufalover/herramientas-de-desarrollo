@@ -91,52 +91,40 @@
                                 <!-- Fin de formulario -->
 
                                 <!-- Tabla -->
-                                <div class="col-md-12 mt-5">
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered table-hover align-middle">
-                                            <thead class="table-light">
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>Número de Cuenta</th>
-                                                    <th>Tipo de Cuenta</th>
-                                                    <th>Saldo</th>
-                                                    <th>Cliente</th>
-                                                    <th>DNI</th>
-                                                    <th>Fecha Apertura</th>
-                                                    <th>Acciones</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr th:each="account : ${list}">
-                                                    <td th:text="${account.id}"></td>
-                                                    <td th:text="${account.accountNumber}"></td>
-                                                    <td th:text="${account.type.name}"></td>
-                                                    <td th:text="${account.balance}"></td>
-                                                    <td
-                                                        th:text="${account.customer.name + ' ' + account.customer.lastName}">
-                                                    </td>
-                                                    <td th:text="${account.customer.docuementNumber}"></td>
-                                                    <td th:text="${account.openingDate}"></td>
-                                                    <td>
-                                                        <a th:href="@{/account/edit/{id}(id=${account.id})}"
-                                                            class="btn btn-warning btn-sm"><i
-                                                                class="bi bi-pencil-square"></i></a>
-                                                        <form th:action="@{/account/delete}" method="post"
-                                                            class="d-inline">
-                                                            <input type="hidden" name="id" th:value="${account.id}">
-                                                            <button type="submit"
-                                                                class="btn btn-danger btn-sm btn-eliminar"><i
-                                                                    class="bi bi-trash-fill"></i></button>
-                                                        </form>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                                <div class="rw-md-5">
+                                    <h4 class="mb-3">Lista de Cuentas</h4>
 
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Número de Cuenta</th>
+                                                <th>Tipo</th>
+                                                <th>Saldo</th>
+                                                <th>Cliente</th>
+                                                <th>DNI</th>
+                                                <th>Fecha de Apertura</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:if="${list == null or #lists.isEmpty(list)}">
+                                                <td colspan="7" class="text-center">No hay cuentas</td>
+                                            </tr>
+
+                                            <tr th:each="account : ${list}">
+                                                <td th:text="${account.id}">-</td>
+                                                <td th:text="${account.accountNumber}">-</td>
+                                                <td th:text="${account.type != null ? account.type.name : '-'}">-</td>
+                                                <td th:text="${account.balance != null ? account.balance : '0.00'}">0.00</td>
+                                                <td th:text="${account.customer != null ? account.customer.name + ' ' + account.customer.lastName : '-'}">-</td>
+                                                <td th:text="${account.customer != null ? account.customer.docuementNumber : '-'}">-</td>
+                                                <td th:text="${account.openingDate != null ? account.openingDate : '-'}">-</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- Fin de la tabla -->
                             </div>
-                            <!-- Fin de la tabla -->
                         </div>
                     </div>
                 </div>

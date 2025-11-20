@@ -36,7 +36,7 @@ public class SecurityConfig {
                .cors().and()
                .csrf(AbstractHttpConfigurer::disable) 
                 .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/account/**", "/customer/**", "/login/**").permitAll()
+                    .requestMatchers("/account/**", "/admin/**", "/customer/**", "/login/**", "/img/**", "/css/**", "/js/**").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")
