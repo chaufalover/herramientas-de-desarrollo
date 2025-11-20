@@ -1,0 +1,12 @@
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+
+### VS Code ###
+.vscode/
+
+### Python
+venv/
+__pycache__/
