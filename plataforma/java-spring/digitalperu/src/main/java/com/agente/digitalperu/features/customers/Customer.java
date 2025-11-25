@@ -2,7 +2,6 @@ package com.agente.digitalperu.features.customers;
 
 import java.time.LocalDate;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -76,6 +75,9 @@ public class Customer {
     @Size(min = 8, message = "Password must have at least 8 characters")
     @Column(name = "password", nullable = false)
     private String password;
+
+    @Column(name = "face_encoding_path")
+    private String faceEncodingPath;
 
     @PrePersist
     public void prePersist() {

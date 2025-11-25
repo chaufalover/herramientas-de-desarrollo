@@ -151,7 +151,15 @@
                                     </form>
                                 </div>
 
-                                
+                                <!-- camara -->
+                                <div class="container-fluid m-4" id="faceCaptureContainer" style="display:none;">
+                                    <video id="videoStream" width="350" height="250" autoplay></video>
+                                    <canvas id="faceCanvas" style="display:none;"></canvas>
+
+                                    <button id="captureFace" class="btn btn-success mt-2 mb-2">Capturar Rostro</button>
+                                </div>
+
+
                                 <!-- Inicio de la tabla -->
                                 <!-- Tabla -->
                                 <div class="table-responsive">
@@ -237,26 +245,69 @@
         });
     </script>
     <script>
-        // Función para cargar imagen QR descargada
-        document.querySelector('.btn-primary').addEventListener('click', function () {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'image/*';
-            input.onchange = function (e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function (event) {
-                        document.getElementById('qrImage').src = event.target.result;
-                        document.getElementById('qrImage').style.display = 'block';
-                        document.getElementById('qrPlaceholder').style.display = 'none';
-                    };
-                    reader.readAsDataURL(file);
-                }
-            };
-            input.click();
+        document.addEventListener("DOMContentLoaded", function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const newId = urlParams.get("newId");
+
+            if (newId) {
+                Swal.fire({
+                    title: "Registrar Rostro",
+                    text: "Ahora captura el rostro del cliente",
+                    icon: "info",
+                    confirmButtonText: "Abrir cámara"
+                }).then(() => {
+                    iniciarCamara(newId);
+                });
+            }
         });
+
+        function iniciarCamara(customerId) {
+            const video = document.getElementById("videoStream");
+            const container = document.getElementById("faceCaptureContainer");
+            container.style.display = "block";
+
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    video.srcObject = stream;
+                })
+                .catch(err => {
+                    alert("No se pudo acceder a la cámara: " + err);
+                });
+
+            document.getElementById("captureFace").onclick = function () {
+                capturarRostro(customerId);
+            };
+        }
+
+        function capturarRostro(customerId) {
+            const video = document.getElementById("videoStream");
+            const canvas = document.getElementById("faceCanvas");
+            const ctx = canvas.getContext("2d");
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0);
+
+            const imageBase64 = canvas.toDataURL("image/jpeg").split(",")[1];
+
+            fetch("/customer/register/face", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "same-origin",
+                body: JSON.stringify({
+                    customerId: customerId,
+                    imageBase64: imageBase64
+                })
+            })
+                .then(async r => {
+                    const body = await r.json().catch(() => ({}));
+                    if (r.ok) Swal.fire("Éxito", "Rostro registrado correctamente", "success");
+                    else Swal.fire("Error", body.error || "Hubo un problema", "error");
+                })
+                .catch(e => Swal.fire("Error", "Error de comunicación", "error"));
+        }
     </script>
+
     <script th:src="@{/js/navigator.js}"></script>
 </body>
 
