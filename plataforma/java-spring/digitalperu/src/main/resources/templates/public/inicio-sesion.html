@@ -40,7 +40,7 @@
   <script>
     document.getElementById("btnScan").addEventListener("click", async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8001/detect");
+        const response = await fetch("http://127.0.0.1:8000/detect");
         if (!response.ok) { alert("Error al iniciar la detección."); return; }
         let data = await response.json();
 

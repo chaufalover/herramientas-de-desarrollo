@@ -76,9 +76,6 @@ public class Customer {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "face_encoding_path")
-    private String faceEncodingPath;
-
     @PrePersist
     public void prePersist() {
         if (registrationDate == null) {

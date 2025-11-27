@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.client.RestTemplate;
 
 import com.agente.digitalperu.features.accounts.AccountService;
 import com.agente.digitalperu.features.customers.Customer;
@@ -37,98 +36,123 @@ public class LoginQrController {
     private final AccountService accountService;
     private final CustomerService customerService;
     private final PasswordEncoder passwordEncoder;
-    private final RestTemplate restTemplate;
 
+    /**
+     * Página de inicio de sesión
+     */
     @GetMapping
     public String inicioSesion() {
         return "/public/inicio-sesion";
     }
 
+    /**
+     * PASO 1: Validar QR (número de tarjeta)
+     * 
+     * POST /login/qr/validate
+     * Body: { "numeroTarjeta": "1234567890" }
+     * 
+     * Response: {
+     *   "mensaje": "Tarjeta válida, proceda con validación facial",
+     *   "customerId": 1,
+     *   "customerName": "Juan Pérez",
+     *   "hasFaceRegistered": true
+     * }
+     */
     @PostMapping("/qr/validate")
     public ResponseEntity<?> validarQR(@RequestBody Map<String, String> payload) {
         String numeroTarjeta = payload.get("numeroTarjeta");
+        
+        log.info("📱 Validando QR con número de tarjeta: {}", numeroTarjeta);
 
+        // Buscar cliente por número de tarjeta
         Customer customer = accountService.getAccountNumber(numeroTarjeta);
+        
         if (customer == null) {
+            log.warn("❌ Tarjeta no encontrada: {}", numeroTarjeta);
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "Tarjeta no registrada"));
         }
 
+        log.info("✅ QR válido para cliente: {} (ID: {})", customer.getName(), customer.getId());
+        
         return ResponseEntity.ok(Map.of(
-                "mensaje", "Tarjeta válida, ingrese su contraseña",
+                "mensaje", "Tarjeta válida, proceda con validación facial",
                 "customerId", customer.getId(),
-                "customerName", customer.getName()));
+                "customerName", customer.getName(),
+                "hasFaceRegistered", true
+        ));
     }
 
+    /**
+     * PASO 3: Autenticación final con contraseña
+     * (El PASO 2 de validación facial se hace en FaceController)
+     * 
+     * POST /login/auth
+     * Body: { "customerId": "1", "password": "password123" }
+     */
     @PostMapping("/auth")
     public ResponseEntity<?> login(@RequestBody Map<String, String> payload, HttpSession session) {
-        log.info("Login request keys: {}", payload.keySet());
+        log.info("🔐 Intento de login con contraseña");
+        
         String idStr = payload.get("customerId");
         String password = payload.get("password");
+        
         if (idStr == null || password == null) {
-            log.warn("Datos incompletos en login");
+            log.warn("❌ Datos incompletos en login");
             return ResponseEntity.badRequest().body(Map.of("mensaje", "Datos incompletos"));
         }
 
         try {
             Long customerId = Long.valueOf(idStr);
             Customer customer = customerService.getCustomerById(customerId);
-            String stored = customer.getPassword();
-            log.info("Cliente {} encontrado. stored-present={}, stored-len={}", customerId, stored != null,
-                    stored == null ? 0 : stored.length());
+            
+            String storedPassword = customer.getPassword();
+            
+            log.info("Validando password para customerId={}", customerId);
 
-            if (stored != null && passwordEncoder.matches(password, stored)) {
-                log.info("Password válida para customerId={}", customerId);
-                // crear Authentication simple (puedes usar ROLE_USER)
+            // Verificar contraseña
+            if (storedPassword != null && passwordEncoder.matches(password, storedPassword)) {
+                log.info("✅ Login exitoso para: {} (ID: {})", customer.getUsername(), customerId);
+                
+                // Crear autenticación
                 var authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
-                var auth = new UsernamePasswordAuthenticationToken(customer.getUsername(), null, authorities);
+                var auth = new UsernamePasswordAuthenticationToken(
+                        customer.getUsername(), 
+                        null, 
+                        authorities
+                );
+                
                 SecurityContextHolder.getContext().setAuthentication(auth);
-                // guardar SecurityContext en la sesión para que Spring Security lo reconozca
-                session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
-                        SecurityContextHolder.getContext());
+                
+                // Guardar en sesión
+                session.setAttribute(
+                        HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
+                        SecurityContextHolder.getContext()
+                );
                 session.setAttribute("customerId", customerId);
-                return ResponseEntity.ok(Map.of("mensaje", "Autenticado"));
+                
+                return ResponseEntity.ok(Map.of(
+                        "mensaje", "Autenticado correctamente",
+                        "username", customer.getUsername()
+                ));
             } else {
-                log.warn("Password inválida para customerId={}", customerId);
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("mensaje", "Contraseña inválida"));
+                log.warn("❌ Contraseña incorrecta para customerId={}", customerId);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("mensaje", "Contraseña incorrecta"));
             }
+            
         } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("mensaje", "Cliente no encontrado"));
+            log.error("❌ Cliente no encontrado");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("mensaje", "Cliente no encontrado"));
         } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().body(Map.of("mensaje", "customerId inválido"));
+            log.error("❌ CustomerId inválido: {}", idStr);
+            return ResponseEntity.badRequest()
+                    .body(Map.of("mensaje", "CustomerId inválido"));
         } catch (Exception e) {
-            log.error("Error en login", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("mensaje", "Error interno"));
+            log.error("❌ Error en login", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("mensaje", "Error interno del servidor"));
         }
     }
-
-    @PostMapping("/face-validate")
-    public ResponseEntity<?> validarRostro(@RequestBody Map<String, String> payload) {
-
-        String faceImage = payload.get("imageBase64");
-        Long customerId = Long.parseLong(payload.get("customerId"));
-
-        Customer customer = customerService.getCustomerById(customerId);
-
-        if (customer.getFaceEncodingPath() == null) {
-            return ResponseEntity.status(404).body(Map.of("mensaje", "Usuario sin rostro registrado"));
-        }
-
-        try {
-
-            Map<String, Object> body = Map.of(
-                    "image", faceImage,
-                    "encodingPath", customer.getFaceEncodingPath());
-
-            String url = "http://127.0.0.1:8001/face/verify";
-
-            ResponseEntity<Map> response = restTemplate.postForEntity(url, body, Map.class);
-
-            return ResponseEntity.ok(response.getBody());
-
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
-        }
-    }
-
 }

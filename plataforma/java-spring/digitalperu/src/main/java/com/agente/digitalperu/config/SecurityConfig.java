@@ -21,7 +21,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:8080", "http://127.0.0.1:8001"));
+        configuration.setAllowedOrigins(List.of("http://localhost:8080", "http://127.0.0.1:8000"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
@@ -36,7 +36,7 @@ public class SecurityConfig {
                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                .csrf(AbstractHttpConfigurer::disable) 
                 .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/account/**", "/admin/**", "/customer/**", "/login/**", "/img/**", "/css/**", "/js/**", "/face/**").permitAll()
+                    .requestMatchers("/account/**", "/admin/**", "/customer/**", "/login/**", "/img/**", "/css/**", "/js/**", "/api/**").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")
