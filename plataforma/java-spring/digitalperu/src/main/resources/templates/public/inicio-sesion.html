@@ -5,107 +5,298 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
   <title>Inicio de sesión</title>
 </head>
 
 <body>
-  <div class="container text-center my-5 mx-5 row justify-content-center">
+  <div class="container text-center my-5">
     <h1>Inicio de sesión - Agente Digital Perú</h1>
-    <img src="/img/logo.png" alt="LOGO" class="img-fluid mb-3">
-    <button id="btnScan" class="btn btn-primary p-2 my-2 mx-5">Ingresar</button>
+    <img src="/img/logo.png" alt="LOGO" class="img-fluid mb-3" style="max-width: 200px;">
+    <button id="btnScan" class="btn btn-primary btn-lg px-5 py-3">
+      <i class="bi bi-qr-code-scan me-2"></i>Escanear QR
+    </button>
   </div>
 
-  <!-- Modal -->
+  <!-- Modal de Contraseña -->
   <div class="modal fade" id="passwordModal" data-bs-backdrop="static" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Confirmar contraseña</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">
+            <i class="bi bi-key-fill me-2"></i>Ingresa tu contraseña
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
-        <div class="modal-body text-center">
-          <p id="msgResult" class="text-muted"></p>
-          <input type="password" id="passwordInput" class="form-control my-2" placeholder="Ingrese su contraseña">
-          <input type="hidden" id="customerIdInput"> <!-- <-- agregado -->
+        <div class="modal-body">
+          <p id="msgPassword" class="text-muted text-center mb-3"></p>
+          <input type="password" id="passwordInput" class="form-control form-control-lg" 
+                 placeholder="Contraseña" autocomplete="current-password">
+          <input type="hidden" id="customerIdInput">
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button id="btnLogin" class="btn btn-success">Iniciar sesión</button>
+          <button class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="bi bi-x-circle me-2"></i>Cancelar
+          </button>
+          <button id="btnPassword" class="btn btn-primary">
+            <i class="bi bi-arrow-right-circle me-2"></i>Continuar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Código de Verificación -->
+  <div class="modal fade" id="codeModal" data-bs-backdrop="static" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title">
+            <i class="bi bi-envelope-check me-2"></i>Código de Verificación
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body text-center">
+          <p class="text-muted mb-3">
+            <i class="bi bi-info-circle me-2"></i>
+            Hemos enviado un código de 6 dígitos a tu email
+          </p>
+          <p id="msgEmail" class="fw-bold mb-3"></p>
+          <input type="text" id="codeInput" class="form-control form-control-lg text-center" 
+                 placeholder="000000" maxlength="6" pattern="[0-9]{6}" 
+                 style="font-size: 24px; letter-spacing: 8px;">
+          <small class="text-muted d-block mt-2">El código expira en 1 minutos</small>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="bi bi-x-circle me-2"></i>Cancelar
+          </button>
+          <button id="btnVerifyCode" class="btn btn-success">
+            <i class="bi bi-check-circle me-2"></i>Verificar
+          </button>
         </div>
       </div>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
+    let currentCustomerId = null;
+    let currentCustomerName = null;
+    let currentEmail = null;
+
     document.getElementById("btnScan").addEventListener("click", async () => {
       try {
+        console.log('🔍 Iniciando escaneo de QR...');
+        
         const response = await fetch("http://127.0.0.1:8000/detect");
-        if (!response.ok) { alert("Error al iniciar la detección."); return; }
+        
+        if (!response.ok) {
+          Swal.fire('Error', 'Error al iniciar la detección', 'error');
+          return;
+        }
+
         let data = await response.json();
+        console.log('📱 Datos recibidos:', data);
 
-        if (data && (data.customerName || data.customerId)) {
-          const name = (data.customerName || "").trim();
-          document.getElementById("msgResult").textContent =
-            (name ? "Bienvenido " + name + ". " : "") + (data.mensaje || "Ingrese su contraseña.");
-          document.getElementById("customerIdInput").value = data.customerId || "";
-          bootstrap.Modal.getOrCreateInstance(document.getElementById("passwordModal")).show();
+        if (data === null) {
+          Swal.fire('Info', 'No se detectó ningún QR', 'info');
           return;
         }
 
-        if (data && data.numero_tarjeta) {
-          const validateUrl = window.location.origin + "/login/qr/validate";
-          const res = await fetch(validateUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ numeroTarjeta: data.numero_tarjeta })
-          });
-          if (!res.ok) { alert("Error al validar la tarjeta."); return; }
-          const result = await res.json();
-          if (result.customerName) {
-            document.getElementById("msgResult").textContent =
-              "Bienvenido " + result.customerName + ". Ingrese su contraseña.";
-            document.getElementById("customerIdInput").value = result.customerId || "";
-            bootstrap.Modal.getOrCreateInstance(document.getElementById("passwordModal")).show();
-          } else {
-            alert(result.mensaje || "Tarjeta no válida");
-          }
+        if (!data.customerId || !data.customerName) {
+          Swal.fire('Error', data.mensaje || 'QR no válido', 'error');
           return;
         }
 
-        alert("QR no valido");
+        currentCustomerId = data.customerId;
+        currentCustomerName = data.customerName;
+        currentEmail = data.email;
+        
+        console.log('✅ QR válido - ID:', currentCustomerId);
+
+        await Swal.fire({
+          icon: 'success',
+          title: '¡QR Válido!',
+          text: 'Bienvenido ' + currentCustomerName,
+          timer: 2000,
+          showConfirmButton: false
+        });
+
+        showPasswordModal();
+
       } catch (error) {
-        console.error(error);
-        alert("Error al comunicarse con el microservicio o backend.");
+        console.error('❌ Error:', error);
+        Swal.fire('Error', 'Error al comunicarse con el servicio', 'error');
       }
     });
 
-    // Listener para el botón Iniciar sesión en el modal
-    document.getElementById("btnLogin").addEventListener("click", async () => {
+    function showPasswordModal() {
+      document.getElementById("msgPassword").textContent = 
+        `Hola ${currentCustomerName}, ingresa tu contraseña`;
+      document.getElementById("customerIdInput").value = currentCustomerId;
+      document.getElementById("passwordInput").value = "";
+      
+      const passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
+      passwordModal.show();
+      
+      setTimeout(() => {
+        document.getElementById('passwordInput').focus();
+      }, 500);
+    }
+
+    document.getElementById("btnPassword").addEventListener("click", async () => {
       const password = document.getElementById("passwordInput").value;
       const customerId = document.getElementById("customerIdInput").value;
-      if (!customerId || !password) { alert("Ingrese contraseña"); return; }
+      
+      if (!password) {
+        Swal.fire('Error', 'Ingresa tu contraseña', 'error');
+        return;
+      }
 
       try {
-        const res = await fetch(window.location.origin + "/login/auth", {
+        Swal.fire({
+          title: 'Validando...',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
+        const res = await fetch(window.location.origin + "/login/password", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          credentials: 'same-origin', 
           body: JSON.stringify({ customerId, password })
         });
 
-        let body = {};
-        try { body = await res.json(); } catch (e) { }
+        const body = await res.json();
 
-        if (res.ok) {
-          window.location.href = "/transactions";
+        Swal.close();
+
+        if (res.ok && body.success) {
+          bootstrap.Modal.getInstance(document.getElementById('passwordModal')).hide();
+          
+          await Swal.fire({
+            icon: 'success',
+            title: '¡Código Enviado!',
+            text: body.mensaje,
+            timer: 2000,
+            showConfirmButton: false
+          });
+
+          showCodeModal();
         } else {
-          alert(body.mensaje || "Credenciales inválidas");
+          Swal.fire('Error', body.mensaje || 'Contraseña incorrecta', 'error');
         }
       } catch (e) {
-        console.error("Error al iniciar sesión:", e);
-        alert("Error al iniciar sesión. Revisa la consola.");
+        console.error("Error:", e);
+        Swal.close();
+        Swal.fire('Error', 'Error al validar contraseña', 'error');
       }
+    });
+
+    document.getElementById("passwordInput").addEventListener("keypress", (e) => {
+      if (e.key === 'Enter') {
+        document.getElementById("btnPassword").click();
+      }
+    });
+
+    function showCodeModal() {
+      document.getElementById("msgEmail").textContent = currentEmail;
+      document.getElementById("codeInput").value = "";
+      
+      const codeModal = new bootstrap.Modal(document.getElementById('codeModal'));
+      codeModal.show();
+      
+      setTimeout(() => {
+        document.getElementById('codeInput').focus();
+      }, 500);
+    }
+
+    document.getElementById("btnVerifyCode").addEventListener("click", async () => {
+      const code = document.getElementById("codeInput").value;
+      
+      console.log('🔍 Validando código...');
+      console.log('  - customerId:', currentCustomerId);
+      console.log('  - code:', code);
+      console.log('  - code length:', code ? code.length : 0);
+      
+      if (!code || code.length !== 6) {
+        Swal.fire('Error', 'Ingresa el código de 6 dígitos', 'error');
+        return;
+      }
+
+      if (!currentCustomerId) {
+        Swal.fire('Error', 'Error: No hay ID de cliente', 'error');
+        return;
+      }
+
+      try {
+        const payload = { 
+          customerId: currentCustomerId.toString(), 
+          code: code.toString().trim()
+        };
+        
+        console.log('📤 Enviando payload:', payload);
+
+        Swal.fire({
+          title: 'Verificando código...',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
+        const res = await fetch(window.location.origin + "/login/verify-code", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: 'same-origin',
+          body: JSON.stringify(payload)
+        });
+
+        const body = await res.json();
+
+        Swal.close();
+
+        if (res.ok && body.success) {
+
+          bootstrap.Modal.getInstance(document.getElementById('codeModal')).hide();
+          
+          await Swal.fire({
+            icon: 'success',
+            title: '¡Bienvenido!',
+            text: 'Acceso concedido',
+            timer: 1500,
+            showConfirmButton: false
+          });
+          
+          window.location.href = "/transactions";
+        } else {
+          Swal.fire('Error', body.mensaje || 'Código inválido o expirado', 'error');
+        }
+      } catch (e) {
+        console.error("Error:", e);
+        Swal.close();
+        Swal.fire('Error', 'Error al verificar código', 'error');
+      }
+    });
+
+    document.getElementById("codeInput").addEventListener("keypress", (e) => {
+      if (e.key === 'Enter') {
+        document.getElementById("btnVerifyCode").click();
+      }
+    });
+
+    document.getElementById("codeInput").addEventListener("input", (e) => {
+      e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    });
+
+    document.getElementById('codeModal').addEventListener('hidden.bs.modal', () => {
+      console.log('🧹 Limpiando datos del flujo de login');
+      currentCustomerId = null;
+      currentCustomerName = null;
+      currentEmail = null;
     });
   </script>
 </body>

@@ -49,8 +49,8 @@ public class CustomerController {
             model.addAttribute("list", customerService.getAllCustomer());
             return "admin/registro-usuario";
         }
-        Customer saved = customerService.addUser(customer);
-        return "redirect:/customer?newId=" + saved.getId();
+        customerService.addUser(customer);
+        return "redirect:/customer";
     }
 
    

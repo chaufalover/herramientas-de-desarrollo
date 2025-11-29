@@ -151,126 +151,60 @@
                                     </form>
                                 </div>
 
-                                <!-- ========== SECCIÓN DE REGISTRO DE ROSTRO ========== -->
-                                <div class="col-md-5" th:if="${customer.id != null}">
-                                    <div class="card border-primary">
-                                        <div class="card-header bg-primary text-white">
-                                            <h5 class="mb-0">
-                                                <i class="bi bi-camera-fill me-2"></i>Registro de Rostro
-                                            </h5>
-                                        </div>
-                                        <div class="card-body text-center">
-                                            <!-- Estado del registro de rostro -->
-                                            <div th:if="${customer.hasFaceRegistered}" class="alert alert-success">
-                                                <i class="bi bi-check-circle-fill me-2"></i>
-                                                <strong>Rostro Registrado</strong>
-                                                <p class="mb-0">Este usuario ya tiene su rostro configurado</p>
-                                            </div>
-
-                                            <div th:unless="${customer.hasFaceRegistered}" class="alert alert-warning">
-                                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                                                <strong>Sin Rostro</strong>
-                                                <p class="mb-0">Registra el rostro para habilitar el acceso facial</p>
-                                            </div>
-
-                                            <!-- Contenedor de cámara -->
-                                            <div id="faceCaptureContainer" style="display:none;">
-                                                <video id="videoStream" width="100%" height="auto" autoplay
-                                                    class="border rounded mb-3"></video>
-                                                <canvas id="faceCanvas" style="display:none;"></canvas>
-
-                                                <div class="d-grid gap-2">
-                                                    <button id="captureFace" class="btn btn-success">
-                                                        <i class="bi bi-camera-fill me-2"></i>Capturar Rostro
-                                                    </button>
-                                                    <button id="cancelCapture" class="btn btn-secondary">
-                                                        <i class="bi bi-x-circle me-2"></i>Cancelar
-                                                    </button>
-                                                </div>
-
-                                                <div id="faceStatus" class="mt-3"></div>
-                                            </div>
-
-                                            <!-- Botones de acción -->
-                                            <div id="faceButtons">
-                                                <button id="startFaceRegistration" class="btn btn-primary btn-lg"
-                                                    th:unless="${customer.hasFaceRegistered}">
-                                                    <i class="bi bi-camera-video me-2"></i>Activar Cámara
-                                                </button>
-
-                                                <button id="updateFaceRegistration" class="btn btn-warning btn-lg"
-                                                    th:if="${customer.hasFaceRegistered}">
-                                                    <i class="bi bi-arrow-repeat me-2"></i>Actualizar Rostro
-                                                </button>
-                                            </div>
-
-                                            <!-- Información del cliente -->
-                                            <div class="mt-4 text-start">
-                                                <p class="mb-1"><strong>Cliente:</strong> <span
-                                                        th:text="${customer.name + ' ' + customer.lastName}"></span></p>
-                                                <p class="mb-1"><strong>Usuario:</strong> <span
-                                                        th:text="${customer.username}"></span></p>
-                                                <p class="mb-0"><strong>ID:</strong> <span
-                                                        th:text="${customer.id}"></span></p>
-                                            </div>
-                                        </div>
-                                    </div>
+                                
+                                <!-- Inicio de la tabla -->
+                                <!-- Tabla -->
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover align-middle">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Tipo de cliente</th>
+                                                <th>Tipo de documento</th>
+                                                <th>Numero de documento</th>
+                                                <th>Nombres</th>
+                                                <th>Apellido</th>
+                                                <th>Correo</th>
+                                                <th>Telefono</th>
+                                                <th>Direccion</th>
+                                                <th>Fecha de Registro</th>
+                                                <th>Estado</th>
+                                                <th>Usuario</th>
+                                                <th>Contraseña</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="cust : ${list}">
+                                                <td th:text="${cust.id}"></td>
+                                                <td th:text="${cust.customerType}"></td>
+                                                <td th:text="${cust.docuementType}"></td>
+                                                <td th:text="${cust.docuementNumber}"></td>
+                                                <td th:text="${cust.name}"></td>
+                                                <td th:text="${cust.lastName}"></td>
+                                                <td th:text="${cust.email}"></td>
+                                                <td th:text="${cust.phone}"></td>
+                                                <td th:text="${cust.address}"></td>
+                                                <td th:text="${cust.registrationDate}"></td>
+                                                <td th:text="${cust.status}"></td>
+                                                <td th:text="${cust.username}"></td>
+                                                <td th:text="${cust.password}"></td>
+                                                <td>
+                                                    <a th:href="@{/customer/edit/{id}(id=${cust.id})}"
+                                                        class="btn btn-warning"><i class="bi bi-pencil-square"></i></a>
+                                                    <form th:action="@{/customer/delete}" method="post"
+                                                        class="d-inline eliminar-form">
+                                                        <input type="hidden" name="id" th:value="${cust.id}">
+                                                        <button type="button"
+                                                            class="btn btn-danger btn-sm btn-eliminar"><i
+                                                                class="bi bi-trash-fill"></i></i></button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
-                            </div>
-
-                            <!-- Tabla de clientes -->
-                            <div class="row mt-4">
-                                <div class="col-12">
-                                    <h3 class="mb-3">Lista de Clientes</h3>
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered table-hover align-middle">
-                                            <thead class="table-light">
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>Nombre Completo</th>
-                                                    <th>Documento</th>
-                                                    <th>Usuario</th>
-                                                    <th>Email</th>
-                                                    <th>Teléfono</th>
-                                                    <th>Estado</th>
-                                                    <th>Acciones</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr th:each="cust : ${list}">
-                                                    <td th:text="${cust.id}"></td>
-                                                    <td th:text="${cust.name + ' ' + cust.lastName}"></td>
-                                                    <td th:text="${cust.docuementType + ': ' + cust.docuementNumber}">
-                                                    </td>
-                                                    <td th:text="${cust.username}"></td>
-                                                    <td th:text="${cust.email}"></td>
-                                                    <td th:text="${cust.phone}"></td>
-                                                    <td class="text-center">
-                                                        <i class="bi bi-check-circle-fill text-success fs-5"
-                                                            th:if="${cust.hasFaceRegistered}" title="Rostro registrado"></i>
-                                                        <i class="bi bi-x-circle-fill text-danger fs-5"
-                                                            th:unless="${cust.hasFaceRegistered}"
-                                                            title="Sin rostro"></i>
-                                                    </td>
-                                                    <td>
-                                                        <a th:href="@{/customer/edit/{id}(id=${cust.id})}"
-                                                            class="btn btn-warning btn-sm">
-                                                            <i class="bi bi-pencil-square"></i>
-                                                        </a>
-                                                        <form th:action="@{/customer/delete}" method="post"
-                                                            class="d-inline eliminar-form">
-                                                            <input type="hidden" name="id" th:value="${cust.id}">
-                                                            <button type="button"
-                                                                class="btn btn-danger btn-sm btn-eliminar">
-                                                                <i class="bi bi-trash-fill"></i>
-                                                            </button>
-                                                        </form>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                                <!-- Fin de la tabla -->
                             </div>
                         </div>
                     </div>
@@ -281,8 +215,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <!-- Script para eliminar clientes -->
     <script>
         document.querySelectorAll('.btn-eliminar').forEach(btn => {
             btn.addEventListener('click', function () {
@@ -304,182 +236,6 @@
             });
         });
     </script>
-
-    <!-- Script para registro de rostro -->
-    <script th:inline="javascript">
-        /*<![CDATA[*/
-        const customerId = /*[[${customer.id}]]*/ null;
-        let stream = null;
-
-        // Elementos DOM
-        const faceCaptureContainer = document.getElementById('faceCaptureContainer');
-        const faceButtons = document.getElementById('faceButtons');
-        const videoStream = document.getElementById('videoStream');
-        const faceCanvas = document.getElementById('faceCanvas');
-        const faceStatus = document.getElementById('faceStatus');
-
-        // Botones
-        const startFaceBtn = document.getElementById('startFaceRegistration');
-        const updateFaceBtn = document.getElementById('updateFaceRegistration');
-        const captureFaceBtn = document.getElementById('captureFace');
-        const cancelCaptureBtn = document.getElementById('cancelCapture');
-
-        // Event listeners
-        if (startFaceBtn) {
-            startFaceBtn.addEventListener('click', startCamera);
-        }
-
-        if (updateFaceBtn) {
-            updateFaceBtn.addEventListener('click', () => {
-                Swal.fire({
-                    title: '¿Actualizar rostro?',
-                    text: 'El rostro anterior será reemplazado',
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonText: 'Sí, actualizar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        startCamera();
-                    }
-                });
-            });
-        }
-
-        if (captureFaceBtn) {
-            captureFaceBtn.addEventListener('click', captureAndRegisterFace);
-        }
-
-        if (cancelCaptureBtn) {
-            cancelCaptureBtn.addEventListener('click', cancelCapture);
-        }
-
-        // Función para iniciar la cámara
-        async function startCamera() {
-            if (!customerId) {
-                Swal.fire('Error', 'Primero debes guardar el cliente', 'error');
-                return;
-            }
-
-            try {
-                // Solicitar acceso a la cámara
-                stream = await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        width: { ideal: 640 },
-                        height: { ideal: 480 }
-                    }
-                });
-
-                videoStream.srcObject = stream;
-                faceCaptureContainer.style.display = 'block';
-                faceButtons.style.display = 'none';
-                faceStatus.innerHTML = '<div class="alert alert-info"><i class="bi bi-info-circle me-2"></i>Posiciona tu rostro frente a la cámara</div>';
-
-            } catch (error) {
-                console.error('Error al acceder a la cámara:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error de cámara',
-                    text: 'No se pudo acceder a la cámara: ' + error.message
-                });
-            }
-        }
-
-        // Función para capturar y registrar el rostro
-        async function captureAndRegisterFace() {
-            try {
-                // Configurar canvas
-                faceCanvas.width = videoStream.videoWidth;
-                faceCanvas.height = videoStream.videoHeight;
-
-                // Capturar frame actual
-                const ctx = faceCanvas.getContext('2d');
-                ctx.drawImage(videoStream, 0, 0);
-
-                // Convertir a base64
-                const imageBase64 = faceCanvas.toDataURL('image/jpeg', 0.8);
-
-                // Mostrar estado de carga
-                faceStatus.innerHTML = '<div class="alert alert-info"><div class="spinner-border spinner-border-sm me-2"></div>Registrando rostro...</div>';
-                captureFaceBtn.disabled = true;
-
-                // Enviar al backend
-                const response = await fetch('/api/face/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        customerId: customerId,
-                        imageBase64: imageBase64
-                    })
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    faceStatus.innerHTML = '<div class="alert alert-success"><i class="bi bi-check-circle me-2"></i>' + result.message + '</div>';
-
-                    // Detener cámara
-                    stopCamera();
-
-                    // Mostrar confirmación
-                    await Swal.fire({
-                        icon: 'success',
-                        title: '¡Éxito!',
-                        text: 'Rostro registrado correctamente',
-                        timer: 2000
-                    });
-
-                    // Recargar página para actualizar estado
-                    window.location.reload();
-
-                } else {
-                    faceStatus.innerHTML = '<div class="alert alert-danger"><i class="bi bi-x-circle me-2"></i>' + result.message + '</div>';
-                    captureFaceBtn.disabled = false;
-
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: result.message
-                    });
-                }
-
-            } catch (error) {
-                console.error('Error al registrar rostro:', error);
-                faceStatus.innerHTML = '<div class="alert alert-danger"><i class="bi bi-x-circle me-2"></i>Error de conexión</div>';
-                captureFaceBtn.disabled = false;
-
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Error al conectar con el servidor: ' + error.message
-                });
-            }
-        }
-
-        // Función para cancelar captura
-        function cancelCapture() {
-            stopCamera();
-            faceCaptureContainer.style.display = 'none';
-            faceButtons.style.display = 'block';
-            faceStatus.innerHTML = '';
-        }
-
-        // Función para detener la cámara
-        function stopCamera() {
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-                videoStream.srcObject = null;
-                stream = null;
-            }
-        }
-
-        // Limpiar al salir de la página
-        window.addEventListener('beforeunload', stopCamera);
-        /*]]>*/
-    </script>
-
     <script th:src="@{/js/navigator.js}"></script>
 </body>
 
