@@ -11,3 +11,9 @@ HELP.md
 ### Python
 venv/
 __pycache__/
+lib/
+lib64/
+*.pyc
+bin/
+include/
+pyvenv.cfg

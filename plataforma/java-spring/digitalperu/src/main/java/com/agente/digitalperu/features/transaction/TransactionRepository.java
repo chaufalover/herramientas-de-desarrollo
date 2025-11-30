@@ -1,7 +1,12 @@
 package com.agente.digitalperu.features.transaction;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
 
-public interface TransactionRepository extends JpaRepository<Transaction, Long>{
-    
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+public interface TransactionRepository extends JpaRepository<Transaction, Long> {
+
+
 }

@@ -2,6 +2,7 @@ package com.agente.digitalperu.features.transaction;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 
@@ -20,41 +21,63 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
 
     @Transactional
-    public Transaction transfer(String originNumber, String destinationNumber, BigDecimal amount) {
+    public BigDecimal transfer(
+            String originAccountNumber,
+            String destinationAccountNumber,
+            BigDecimal amount,
+            Long customerId) {
 
-       
-        Account origin = accountRepository.findByAccountNumber(originNumber)
-                .orElseThrow(() -> new RuntimeException("Origin account not found"));
-
-        Account destination = accountRepository.findByAccountNumber(destinationNumber)
-                .orElseThrow(() -> new RuntimeException("Destination account not found"));
-
-        
-        if (origin.getId().equals(destination.getId())) {
-            throw new RuntimeException("Cannot transfer to the same account");
+        if (originAccountNumber.equals(destinationAccountNumber)) {
+            throw new IllegalArgumentException("No puedes transferir a la misma cuenta.");
         }
 
+        // Cuenta ORIGEN
+        Account origin = accountRepository.findByAccountNumber(originAccountNumber)
+                .orElseThrow(() -> new NoSuchElementException("La cuenta de origen no existe."));
+
+        // La cuenta origen debe ser del usuario logueado
+        if (!origin.getCustomer().getId().equals(customerId)) {
+            throw new IllegalArgumentException("No puedes transferir desde una cuenta que no es tuya.");
+        }
+
+        // Cuenta DESTINO
+        Account destination = accountRepository.findByAccountNumber(destinationAccountNumber)
+                .orElseThrow(() -> new NoSuchElementException("La cuenta de destino no existe."));
+
+        // Validar tipo de cuenta destino
+        if (!destination.getType().getName().equalsIgnoreCase("DEBITO")) {
+            throw new IllegalArgumentException("La cuenta destino debe ser de tipo DEBITO.");
+        }
+
+        // Validaciones de monto
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new RuntimeException("Amount must be positive");
+            throw new IllegalArgumentException("El monto debe ser mayor a 0.");
         }
 
+        // Validación de saldo
         if (origin.getBalance().compareTo(amount) < 0) {
-            throw new RuntimeException("Insufficient funds");
+            throw new IllegalArgumentException("Saldo insuficiente.");
         }
 
+        // Actualizar saldos
         origin.setBalance(origin.getBalance().subtract(amount));
         destination.setBalance(destination.getBalance().add(amount));
 
         accountRepository.save(origin);
         accountRepository.save(destination);
 
-        Transaction tx = new Transaction();
-        tx.setOriginAccount(origin);
-        tx.setDestinationAccount(destination);
-        tx.setAmount(amount);
-        tx.setTransactionType(TransactionEnum.TRANSFER);
-        tx.setTransactionDate(LocalDate.now());
+        // Registrar la transacción
+        Transaction transaction = Transaction.builder()
+                .originAccount(origin)
+                .destinationAccount(destination)
+                .amount(amount)
+                .transactionType(TransactionEnum.TRANSFER)
+                .transactionDate(LocalDate.now())
+                .build();
 
-        return transactionRepository.save(tx);
+        transactionRepository.save(transaction);
+
+        return origin.getBalance();
     }
+
 }

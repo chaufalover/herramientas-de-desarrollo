@@ -65,7 +65,7 @@
           <input type="text" id="codeInput" class="form-control form-control-lg text-center" 
                  placeholder="000000" maxlength="6" pattern="[0-9]{6}" 
                  style="font-size: 24px; letter-spacing: 8px;">
-          <small class="text-muted d-block mt-2">El código expira en 1 minutos</small>
+          <small class="text-muted d-block mt-2">El código expira en 5 minutos</small>
         </div>
         <div class="modal-footer">
           <button class="btn btn-secondary" data-bs-dismiss="modal">
@@ -85,7 +85,9 @@
     let currentCustomerId = null;
     let currentCustomerName = null;
     let currentEmail = null;
+    let currentAccountNumber = null; // ← NUEVO
 
+    // ==================== PASO 1: ESCANEAR QR ====================
     document.getElementById("btnScan").addEventListener("click", async () => {
       try {
         console.log('🔍 Iniciando escaneo de QR...');
@@ -110,12 +112,16 @@
           return;
         }
 
+        // Guardar datos (incluyendo accountNumber del QR)
         currentCustomerId = data.customerId;
         currentCustomerName = data.customerName;
         currentEmail = data.email;
+        currentAccountNumber = data.numeroTarjeta || data.accountNumber; // ← NUEVO
         
         console.log('✅ QR válido - ID:', currentCustomerId);
+        console.log('📝 Account Number:', currentAccountNumber);
 
+        // Mostrar bienvenida
         await Swal.fire({
           icon: 'success',
           title: '¡QR Válido!',
@@ -124,6 +130,7 @@
           showConfirmButton: false
         });
 
+        // Abrir modal de contraseña
         showPasswordModal();
 
       } catch (error) {
@@ -132,6 +139,7 @@
       }
     });
 
+    // ==================== PASO 2: CONTRASEÑA ====================
     function showPasswordModal() {
       document.getElementById("msgPassword").textContent = 
         `Hola ${currentCustomerName}, ingresa tu contraseña`;
@@ -141,6 +149,7 @@
       const passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
       passwordModal.show();
       
+      // Focus en el input
       setTimeout(() => {
         document.getElementById('passwordInput').focus();
       }, 500);
@@ -156,6 +165,7 @@
       }
 
       try {
+        // Mostrar loading
         Swal.fire({
           title: 'Validando...',
           allowOutsideClick: false,
@@ -167,7 +177,11 @@
         const res = await fetch(window.location.origin + "/login/password", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ customerId, password })
+          body: JSON.stringify({ 
+            customerId, 
+            password,
+            accountNumber: currentAccountNumber  // ← NUEVO: Enviar accountNumber
+          })
         });
 
         const body = await res.json();
@@ -175,8 +189,10 @@
         Swal.close();
 
         if (res.ok && body.success) {
+          // Cerrar modal de contraseña
           bootstrap.Modal.getInstance(document.getElementById('passwordModal')).hide();
           
+          // Mostrar confirmación
           await Swal.fire({
             icon: 'success',
             title: '¡Código Enviado!',
@@ -185,6 +201,7 @@
             showConfirmButton: false
           });
 
+          // Abrir modal de código
           showCodeModal();
         } else {
           Swal.fire('Error', body.mensaje || 'Contraseña incorrecta', 'error');
@@ -196,19 +213,31 @@
       }
     });
 
+    // Enter en password
     document.getElementById("passwordInput").addEventListener("keypress", (e) => {
       if (e.key === 'Enter') {
         document.getElementById("btnPassword").click();
       }
     });
 
+    // ==================== PASO 3: CÓDIGO DE VERIFICACIÓN ====================
     function showCodeModal() {
+      console.log('📧 Abriendo modal de código');
+      console.log('  - currentCustomerId:', currentCustomerId);
+      console.log('  - currentEmail:', currentEmail);
+      
+      if (!currentCustomerId) {
+        Swal.fire('Error', 'Error interno: No hay ID de cliente', 'error');
+        return;
+      }
+      
       document.getElementById("msgEmail").textContent = currentEmail;
       document.getElementById("codeInput").value = "";
       
       const codeModal = new bootstrap.Modal(document.getElementById('codeModal'));
       codeModal.show();
       
+      // Focus en el input
       setTimeout(() => {
         document.getElementById('codeInput').focus();
       }, 500);
@@ -240,6 +269,7 @@
         
         console.log('📤 Enviando payload:', payload);
 
+        // Mostrar loading
         Swal.fire({
           title: 'Verificando código...',
           allowOutsideClick: false,
@@ -260,9 +290,10 @@
         Swal.close();
 
         if (res.ok && body.success) {
-
+          // Cerrar modal
           bootstrap.Modal.getInstance(document.getElementById('codeModal')).hide();
           
+          // Mostrar éxito
           await Swal.fire({
             icon: 'success',
             title: '¡Bienvenido!',
@@ -271,7 +302,8 @@
             showConfirmButton: false
           });
           
-          window.location.href = "/transactions";
+          // Redirigir a Mi Cuenta
+          window.location.href = body.redirectUrl || "/my-account";
         } else {
           Swal.fire('Error', body.mensaje || 'Código inválido o expirado', 'error');
         }
@@ -282,21 +314,26 @@
       }
     });
 
+    // Enter en código
     document.getElementById("codeInput").addEventListener("keypress", (e) => {
       if (e.key === 'Enter') {
         document.getElementById("btnVerifyCode").click();
       }
     });
 
+    // Solo permitir números en el código
     document.getElementById("codeInput").addEventListener("input", (e) => {
       e.target.value = e.target.value.replace(/[^0-9]/g, '');
     });
 
+    // Limpiar datos SOLO cuando se cierra el modal de código
+    // (NO limpiar cuando se cierra el de contraseña porque aún necesitamos los datos)
     document.getElementById('codeModal').addEventListener('hidden.bs.modal', () => {
       console.log('🧹 Limpiando datos del flujo de login');
       currentCustomerId = null;
       currentCustomerName = null;
       currentEmail = null;
+      currentAccountNumber = null; // ← NUEVO
     });
   </script>
 </body>
