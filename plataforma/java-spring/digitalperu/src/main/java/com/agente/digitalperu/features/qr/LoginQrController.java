@@ -40,27 +40,11 @@ public class LoginQrController {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
 
-    /**
-     * Página de inicio de sesión
-     */
     @GetMapping
     public String inicioSesion() {
         return "/public/inicio-sesion";
     }
 
-    /**
-     * PASO 1: Validar QR (número de tarjeta)
-     * 
-     * POST /login/qr/validate
-     * Body: { "numeroTarjeta": "1234567890" }
-     * 
-     * Response: {
-     * "mensaje": "Tarjeta válida",
-     * "customerId": 1,
-     * "customerName": "Juan Pérez",
-     * "email": "juan@email.com"
-     * }
-     */
     @PostMapping("/qr/validate")
     public ResponseEntity<?> validarQR(@RequestBody Map<String, String> payload, HttpSession session) {
         String numeroTarjeta = payload.get("numeroTarjeta");
@@ -75,7 +59,6 @@ public class LoginQrController {
                     .body(Map.of("mensaje", "Tarjeta no registrada"));
         }
 
-        // Guardar el número de tarjeta en la sesión
         session.setAttribute("accountNumber", numeroTarjeta);
 
         log.info("✅ QR válido para cliente: {} (ID: {})", customer.getName(), customer.getId());
@@ -85,28 +68,17 @@ public class LoginQrController {
                 "customerId", customer.getId(),
                 "customerName", customer.getName(),
                 "email", customer.getEmail(),
-                "accountNumber", numeroTarjeta // ← AGREGAR ESTO
+                "accountNumber", numeroTarjeta 
         ));
     }
 
-    /**
-     * PASO 2: Validar contraseña y enviar código
-     * 
-     * POST /login/password
-     * Body: { "customerId": "1", "password": "password123" }
-     * 
-     * Response: {
-     * "success": true,
-     * "mensaje": "Código enviado a tu email"
-     * }
-     */
     @PostMapping("/password")
     public ResponseEntity<?> validatePassword(@RequestBody Map<String, String> payload, HttpSession session) {
         log.info("🔐 Validando contraseña");
 
         String idStr = payload.get("customerId");
         String password = payload.get("password");
-        String accountNumber = payload.get("accountNumber"); // ← Recibir desde frontend
+        String accountNumber = payload.get("accountNumber"); 
 
         if (idStr == null || password == null) {
             log.warn("❌ Datos incompletos");
@@ -119,11 +91,9 @@ public class LoginQrController {
 
             String storedPassword = customer.getPassword();
 
-            // Verificar contraseña
             if (storedPassword != null && passwordEncoder.matches(password, storedPassword)) {
                 log.info("✅ Contraseña correcta para: {}", customer.getUsername());
 
-                // Guardar accountNumber en la sesión AQUÍ
                 if (accountNumber != null) {
                     session.setAttribute("accountNumber", accountNumber);
                     log.info("📝 AccountNumber guardado en sesión: {}", accountNumber);
@@ -137,7 +107,6 @@ public class LoginQrController {
 
                 }
 
-                // Generar y enviar código por email
                 try {
                     emailService.generateAndSendCode(
                             customerId,
@@ -177,17 +146,6 @@ public class LoginQrController {
         }
     }
 
-    /**
-     * PASO 3: Validar código y crear sesión
-     * 
-     * POST /login/verify-code
-     * Body: { "customerId": "1", "code": "123456" }
-     * 
-     * Response: {
-     * "success": true,
-     * "mensaje": "Autenticado correctamente"
-     * }
-     */
     @PostMapping("/verify-code")
     public ResponseEntity<?> verifyCode(
             @RequestBody Map<String, String> payload,
@@ -214,7 +172,6 @@ public class LoginQrController {
         try {
             Long customerId = Long.valueOf(idStr);
 
-            // Validar código
             boolean isValid = emailService.validateCode(customerId, code);
 
             if (isValid) {
@@ -222,7 +179,6 @@ public class LoginQrController {
 
                 log.info("✅ Código válido. Creando sesión para: {}", customer.getUsername());
 
-                // Crear autenticación
                 var authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
                 var auth = new UsernamePasswordAuthenticationToken(
                         customer.getUsername(),
@@ -231,7 +187,6 @@ public class LoginQrController {
 
                 SecurityContextHolder.getContext().setAuthentication(auth);
 
-                // Guardar en sesión
                 session.setAttribute(
                         HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
                         SecurityContextHolder.getContext());
@@ -272,10 +227,6 @@ public class LoginQrController {
         }
     }
 
-    /**
-     * Enmascara el email para mostrar solo parte
-     * Ejemplo: juan@email.com → j***@email.com
-     */
     private String maskEmail(String email) {
         if (email == null || !email.contains("@")) {
             return email;

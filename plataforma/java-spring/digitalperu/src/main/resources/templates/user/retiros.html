@@ -75,12 +75,40 @@
                 });
                 window.location.href = "/transactions";
             } else {
-                alert(body.mensaje);
+               Swal.fire({
+                    icon: "error",
+                    title: "Error en la transferencia",
+                    text: body.mensaje
+                });
             }
         });
 
     </script>
+     <script>
+        let timeLeft = 60; 
+
+        setInterval(() => {
+            timeLeft--;
+
+            if (timeLeft === 30) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Atención",
+                    text: "La sesión se cerrará en 30 segundos.",
+                    timer: 2500,
+                    showConfirmButton: false
+                });
+            }
+
+            if (timeLeft <= 0) {
+                window.location.href = "/logout";
+            }
+
+        }, 1000);
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    
 
 </body>
 

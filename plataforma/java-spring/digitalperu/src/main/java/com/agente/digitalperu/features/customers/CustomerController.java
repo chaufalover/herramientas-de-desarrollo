@@ -28,11 +28,10 @@ public class CustomerController {
             @RequestParam(required = false) Long newId) {
 
         if (newId != null) {
-            // Cuando se acaba de registrar el rostro
             Customer c = customerService.getCustomerById(newId);
             model.addAttribute("customer", c);
         } else {
-            // Cuando se entra normalmente al formulario
+            
             model.addAttribute("customer", new Customer());
         }
 
@@ -44,7 +43,6 @@ public class CustomerController {
     public String addCustomer(@Valid @ModelAttribute Customer customer, BindingResult error, Model model) {
         if (error.hasErrors()) {
             System.out.println("Errores: " + error.getAllErrors());
-            // asegurarse de que la plantilla tenga el objeto customer y la lista
             model.addAttribute("customer", customer);
             model.addAttribute("list", customerService.getAllCustomer());
             return "admin/registro-usuario";

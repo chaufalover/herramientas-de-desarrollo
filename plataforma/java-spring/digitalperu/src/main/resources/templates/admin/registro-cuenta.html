@@ -87,7 +87,7 @@
                                             </button>
                                         </div>
                                     </form>
-                                    
+
                                 </div>
                                 <!-- Fin de formulario -->
 
@@ -140,7 +140,8 @@
         </div>
     </div>
     <!-- Modal del Código QR -->
-    <div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+    <div th:if="${qr_image}" class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content shadow-lg border-0 rounded-4">
                 <div class="modal-header bg-primary text-white">
@@ -154,8 +155,8 @@
                 <div class="modal-body text-center">
                     <p class="text-muted mb-3">Este es el código QR asociado a tu cuenta.</p>
 
-                    <img id="qrModalImg" th:src="'data:image/png;base64,' + ${qr_image}" alt="Código QR"
-                        class="img-fluid border rounded p-2 shadow-sm" style="max-width: 280px;" />
+                    <img id="qrModalImg" th:if="${qr_image}" th:src="|data:image/png;base64,${qr_image}|"
+                        alt="Código QR" class="img-fluid border rounded p-2 shadow-sm" style="max-width: 280px;" />
                 </div>
 
                 <div class="modal-footer justify-content-center">
@@ -163,20 +164,20 @@
                         <i class="bi bi-x-circle"></i> Cerrar
                     </button>
 
-                    <a id="downloadQrBtn" th:href="'data:image/png;base64,' + ${qr_image}"
+                    <a id="downloadQrBtn" th:if="${qr_image}" th:href="|data:image/png;base64,${qr_image}|"
                         download="codigo_qr_cuenta.png" class="btn btn-primary">
-                        <i class="bi bi-download"></i> Descargar QR
+                        <i class="bi bi-download"></i> Descargar Código QR
                     </a>
                 </div>
 
             </div>
         </div>
     </div>
-
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const qrImg = document.getElementById("qrModalImg");
-            if (qrImg && qrImg.src.includes("base64")) {
+
+            if (qrImg && qrImg.getAttribute("src") && qrImg.getAttribute("src").includes("base64")) {
                 const modal = new bootstrap.Modal(document.getElementById('qrModal'));
                 modal.show();
             }

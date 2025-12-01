@@ -2,6 +2,7 @@ package com.agente.digitalperu.features.transaction;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
@@ -31,42 +32,34 @@ public class TransactionService {
             throw new IllegalArgumentException("No puedes transferir a la misma cuenta.");
         }
 
-        // Cuenta ORIGEN
         Account origin = accountRepository.findByAccountNumber(originAccountNumber)
                 .orElseThrow(() -> new NoSuchElementException("La cuenta de origen no existe."));
 
-        // La cuenta origen debe ser del usuario logueado
         if (!origin.getCustomer().getId().equals(customerId)) {
             throw new IllegalArgumentException("No puedes transferir desde una cuenta que no es tuya.");
         }
 
-        // Cuenta DESTINO
         Account destination = accountRepository.findByAccountNumber(destinationAccountNumber)
                 .orElseThrow(() -> new NoSuchElementException("La cuenta de destino no existe."));
 
-        // Validar tipo de cuenta destino
         if (!destination.getType().getName().equalsIgnoreCase("DEBITO")) {
             throw new IllegalArgumentException("La cuenta destino debe ser de tipo DEBITO.");
         }
 
-        // Validaciones de monto
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("El monto debe ser mayor a 0.");
         }
 
-        // Validación de saldo
         if (origin.getBalance().compareTo(amount) < 0) {
             throw new IllegalArgumentException("Saldo insuficiente.");
         }
 
-        // Actualizar saldos
         origin.setBalance(origin.getBalance().subtract(amount));
         destination.setBalance(destination.getBalance().add(amount));
 
         accountRepository.save(origin);
         accountRepository.save(destination);
 
-        // Registrar la transacción
         Transaction transaction = Transaction.builder()
                 .originAccount(origin)
                 .destinationAccount(destination)
@@ -79,5 +72,23 @@ public class TransactionService {
 
         return origin.getBalance();
     }
+
+    public List<TransactionHistoryDTO> getHistory(String accountNumber) {
+
+    List<Transaction> trans = transactionRepository.findByAccountHistory(accountNumber);
+
+    return trans.stream().map(t -> {
+
+        boolean incoming = t.getDestinationAccount().getAccountNumber().equals(accountNumber);
+
+        return new TransactionHistoryDTO(
+                t.getAmount(),
+                t.getTransactionDate(),
+                t.getTransactionType().name(),
+                incoming
+        );
+    }).toList();
+}
+
 
 }

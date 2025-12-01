@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.agente.digitalperu.features.accountType.AccountTypeService;
 import com.agente.digitalperu.features.customers.CustomerService;
@@ -37,7 +38,12 @@ public class AccountController {
     }
 
     @PostMapping("/save")
-    public String addAccount(@Valid @ModelAttribute Account account, BindingResult error, Model model) {
+    public String addAccount(
+            @Valid @ModelAttribute Account account,
+            BindingResult error,
+            RedirectAttributes redirect,
+            Model model) {
+
         if (error.hasErrors()) {
             model.addAttribute("list", accountService.getAllAccount());
             model.addAttribute("type", accountTypeService.getAllAccountType());
@@ -45,12 +51,11 @@ public class AccountController {
         }
 
         try {
-            // guardar y usar el objeto persistido para generar el QR
             var savedAccount = accountService.updateAddAccount(account);
             String qrImage = qrService.generateQr(savedAccount.getAccountNumber());
 
-            model.addAttribute("qr_image", qrImage);
-            model.addAttribute("success", "Cuenta registrada correctamente");
+            redirect.addFlashAttribute("qr_image", qrImage);
+            redirect.addFlashAttribute("success", "Cuenta registrada correctamente");
 
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
@@ -60,7 +65,7 @@ public class AccountController {
             return "admin/registro-cuenta";
         }
 
-        return "admin/registro-cuenta";
+        return "redirect:/account";
     }
 
     @GetMapping("/edit/{id}")
@@ -79,7 +84,7 @@ public class AccountController {
                                 + account.getCustomer().getDocuementNumber() + ")");
             }
 
-            return "admin/registro-cuenta";
+            return "redirect:/account";
         } catch (NoSuchElementException e) {
             model.addAttribute("error", "La cuenta con ID " + id + " no fue encontrada.");
             return "admin/registro-cuenta";

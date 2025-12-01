@@ -7,8 +7,12 @@ import java.util.concurrent.TimeUnit;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.util.ByteArrayDataSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -104,7 +108,59 @@ public class EmailService {
         });
     }
 
+    // envio de email con pdf adjunto
+      public void sendEmailWithPdfAndLocation(
+            String to, 
+            String subject, 
+            String body, 
+            byte[] pdfContent, 
+            String pdfFileName,
+            String ubicacion,
+            String enlaceMaps) {
+        
+        try {
+            log.info("📧 Enviando email con PDF y ubicación a: {}", to);
+            
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            
+            helper.setTo(to);
+            helper.setSubject(subject);
+            
+            // Construir el body con la ubicación
+            StringBuilder fullBody = new StringBuilder(body);
+            
+            if (ubicacion != null && !ubicacion.isEmpty()) {
+                fullBody.append("\n\n");
+                fullBody.append("═══════════════════════════════════════\n");
+                fullBody.append("📍 UBICACIÓN DE LA TRANSACCIÓN\n");
+                fullBody.append("═══════════════════════════════════════\n");
+                fullBody.append(ubicacion);
+                
+                if (enlaceMaps != null) {
+                    fullBody.append("\n\n");
+                    fullBody.append("🗺️ Ver en Google Maps:\n");
+                    fullBody.append(enlaceMaps);
+                }
+            }
+            
+            helper.setText(fullBody.toString(), false);
+            
+            // Adjuntar PDF
+            ByteArrayDataSource dataSource = new ByteArrayDataSource(pdfContent, "application/pdf");
+            helper.addAttachment(pdfFileName, dataSource);
+            
+            mailSender.send(message);
+            
+            log.info("✅ Email con PDF y ubicación enviado exitosamente a {}", to);
+            
+        } catch (MessagingException e) {
+            log.error("❌ Error al enviar email con PDF: {}", e.getMessage(), e);
+            throw new RuntimeException("Error al enviar comprobante por email");
+        }
+    }
     
+    // clase interna para datos de verificación
     @lombok.Data
     @lombok.AllArgsConstructor
     private static class VerificationData {
