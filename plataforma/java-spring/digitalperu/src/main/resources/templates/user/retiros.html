@@ -1,53 +1,45 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body class="bg-light">
-    <div class="container-fluid">
+    <div class="container">
         <div class="row">
 
             <!-- Main Content -->
             <div class="col-md-10 py-4">
                 <div class="container">
-                    <h1 class="mb-4">Operaciones - Retiros</h1>
-                    <h2 class="text-center mb-5">BIENVENIDO USUARIO</h2>
-
+                    <h1 class="mb-4 text-center">Operaciones - Retiros</h1>
                     <!-- Formulario de Retiros -->
-                    <div class="card shadow">
+                    <div class="card shadow m-5">
                         <div class="card-body p-5">
-                            <h3 class="mb-4">Retiros</h3>
-                            
+                            <h3 class="mb-4 text-center">Retiros</h3>
+
                             <form>
-                                <div class="row mb-4">
+                                <div class="row mb-4 justify-content-center">
                                     <div class="col-md-4">
                                         <label for="monto" class="form-label">Monto</label>
-                                        <input type="number" class="form-control form-control-lg" id="monto" step="0.01" required>
+                                        <input type="number" class="form-control form-control-lg" id="monto" step="0.01"
+                                            required>
                                     </div>
-                                    <div class="col-md-4">
-                                        <label for="cuentaDestino" class="form-label">Cuenta de Destino</label>
-                                        <select id="numeroCuenta" name="numeroCuenta" class="form-control form-control-lg" required>
-                                            <option value="" disabled selected>Seleccione cuenta...</option>
-                                            <option th:each="acc : ${accounts}"
-                                                    th:value="${acc.accountNumber}"
-                                                    th:text="|${acc.type.name} - ${acc.accountNumber} - S/ ${acc.balance}|">
-                                            </option>
-                                        </select>
-                                    </div>
+                                    <input type="hidden" id="numeroCuenta" th:value="${account.accountNumber}" />
                                 </div>
 
                                 <div class="text-center mt-5">
                                     <button type="submit" class="btn btn-primary btn-lg px-5 py-3">Retirar</button>
                                 </div>
                             </form>
+                            <div class="text-start mt-5">
+                                <a href="/transactions" class="btn btn-outline-danger btn-lg px-5 py-3">Volver</a>
+                            </div>
                         </div>
                     </div>
-
-                    <!-- Alerta de Tiempo -->
-                    <div th:replace="~{user/fragments/time-alert :: time-alert}"></div>
                 </div>
             </div>
         </div>
@@ -55,32 +47,69 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-document.querySelector('form').addEventListener('submit', async function (e) {
-  e.preventDefault();
-  const numeroCuenta = document.getElementById('numeroCuenta').value;
-  const monto = document.getElementById('monto').value;
-  if (!numeroCuenta) { alert('Seleccione cuenta'); return; }
-  if (!monto || isNaN(monto) || Number(monto) <= 0) { alert('Ingrese un monto válido'); return; }
+        document.querySelector("form").addEventListener("submit", async function (e) {
+            e.preventDefault();
 
-  try {
-    const res = await fetch('/transactions/retirement', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'same-origin',
-      body: JSON.stringify({ numeroCuenta, monto })
-    });
-    const body = await res.json().catch(()=>({}));
-    if (res.ok) {
-      alert(body.mensaje || 'Retiro exitoso. Nuevo saldo: ' + body.nuevoSaldo);
-      window.location.href = '/transactions'; 
-    } else {
-      alert(body.mensaje || 'Error en el retiro');
-    }
-  } catch (err) {
-    console.error(err);
-    alert('Error de comunicación con el servidor');
-  }
-});
-</script>
+            const monto = document.getElementById("monto").value;
+
+            if (!monto || Number(monto) <= 0) {
+                alert("Ingrese un monto válido");
+                return;
+            }
+
+            const res = await fetch("/transactions/retirement", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ monto })
+            });
+
+            const body = await res.json();
+
+            if (res.ok) {
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Retiro exitoso.',
+                    text: 'Nuevo saldo: ' + body.nuevoSaldo + ' Soles',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                window.location.href = "/transactions";
+            } else {
+               Swal.fire({
+                    icon: "error",
+                    title: "Error en la transferencia",
+                    text: body.mensaje
+                });
+            }
+        });
+
+    </script>
+     <script>
+        let timeLeft = 60; 
+
+        setInterval(() => {
+            timeLeft--;
+
+            if (timeLeft === 30) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Atención",
+                    text: "La sesión se cerrará en 30 segundos.",
+                    timer: 2500,
+                    showConfirmButton: false
+                });
+            }
+
+            if (timeLeft <= 0) {
+                window.location.href = "/logout";
+            }
+
+        }, 1000);
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    
+
 </body>
+
 </html>

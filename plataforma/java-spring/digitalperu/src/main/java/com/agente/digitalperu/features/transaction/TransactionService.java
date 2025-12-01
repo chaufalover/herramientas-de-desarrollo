@@ -2,6 +2,8 @@ package com.agente.digitalperu.features.transaction;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 
@@ -20,26 +22,36 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
 
     @Transactional
-    public Transaction transfer(String originNumber, String destinationNumber, BigDecimal amount) {
+    public BigDecimal transfer(
+            String originAccountNumber,
+            String destinationAccountNumber,
+            BigDecimal amount,
+            Long customerId) {
 
-       
-        Account origin = accountRepository.findByAccountNumber(originNumber)
-                .orElseThrow(() -> new RuntimeException("Origin account not found"));
+        if (originAccountNumber.equals(destinationAccountNumber)) {
+            throw new IllegalArgumentException("No puedes transferir a la misma cuenta.");
+        }
 
-        Account destination = accountRepository.findByAccountNumber(destinationNumber)
-                .orElseThrow(() -> new RuntimeException("Destination account not found"));
+        Account origin = accountRepository.findByAccountNumber(originAccountNumber)
+                .orElseThrow(() -> new NoSuchElementException("La cuenta de origen no existe."));
 
-        
-        if (origin.getId().equals(destination.getId())) {
-            throw new RuntimeException("Cannot transfer to the same account");
+        if (!origin.getCustomer().getId().equals(customerId)) {
+            throw new IllegalArgumentException("No puedes transferir desde una cuenta que no es tuya.");
+        }
+
+        Account destination = accountRepository.findByAccountNumber(destinationAccountNumber)
+                .orElseThrow(() -> new NoSuchElementException("La cuenta de destino no existe."));
+
+        if (!destination.getType().getName().equalsIgnoreCase("DEBITO")) {
+            throw new IllegalArgumentException("La cuenta destino debe ser de tipo DEBITO.");
         }
 
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new RuntimeException("Amount must be positive");
+            throw new IllegalArgumentException("El monto debe ser mayor a 0.");
         }
 
         if (origin.getBalance().compareTo(amount) < 0) {
-            throw new RuntimeException("Insufficient funds");
+            throw new IllegalArgumentException("Saldo insuficiente.");
         }
 
         origin.setBalance(origin.getBalance().subtract(amount));
@@ -48,13 +60,35 @@ public class TransactionService {
         accountRepository.save(origin);
         accountRepository.save(destination);
 
-        Transaction tx = new Transaction();
-        tx.setOriginAccount(origin);
-        tx.setDestinationAccount(destination);
-        tx.setAmount(amount);
-        tx.setTransactionType(TransactionEnum.TRANSFER);
-        tx.setTransactionDate(LocalDate.now());
+        Transaction transaction = Transaction.builder()
+                .originAccount(origin)
+                .destinationAccount(destination)
+                .amount(amount)
+                .transactionType(TransactionEnum.TRANSFER)
+                .transactionDate(LocalDate.now())
+                .build();
 
-        return transactionRepository.save(tx);
+        transactionRepository.save(transaction);
+
+        return origin.getBalance();
     }
+
+    public List<TransactionHistoryDTO> getHistory(String accountNumber) {
+
+    List<Transaction> trans = transactionRepository.findByAccountHistory(accountNumber);
+
+    return trans.stream().map(t -> {
+
+        boolean incoming = t.getDestinationAccount().getAccountNumber().equals(accountNumber);
+
+        return new TransactionHistoryDTO(
+                t.getAmount(),
+                t.getTransactionDate(),
+                t.getTransactionType().name(),
+                incoming
+        );
+    }).toList();
+}
+
+
 }

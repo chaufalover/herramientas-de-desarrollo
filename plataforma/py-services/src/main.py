@@ -1,12 +1,34 @@
+from ast import List
+from typing import Optional
 from qr.generator import generate_qr
 from qr.detector import detect_qr
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from fastapi.responses import JSONResponse
 import json
 from fastapi.middleware.cors import CORSMiddleware
+import cv2
+import numpy as np
+import base64
 
-app = FastAPI(title="QR mircroservice");
+app = FastAPI(title="QR/Face mircroservice");
+
+##CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "*"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+);
+
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the QR/Face microservice!"};
+
+## QR endpoints
 
 class requestQR(BaseModel):
     account_number: str;
@@ -30,16 +52,4 @@ def start_detection():
         except Exception:
             return JSONResponse(content={"raw": result})
     return JSONResponse(content=result)
-    
 
-##CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "http://localhost:8080",
-        "http://127.0.0.1:8001"
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-);

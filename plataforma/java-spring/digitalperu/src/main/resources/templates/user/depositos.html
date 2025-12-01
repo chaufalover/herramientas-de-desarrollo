@@ -2,99 +2,200 @@
 <html lang="es">
 
 <head>
-     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body class="bg-light">
-    <div class="container-fluid">
+    <div class="container">
         <div class="row">
-            
-
             <!-- Main Content -->
             <div class="col-md-10 py-4">
                 <div class="container">
-                    <h1 class="mb-4">Operaciones - Depósitos</h1>
-                    <h2 class="text-center mb-5">BIENVENIDO USUARIO</h2>
+                    <h1 class="mb-4 text-center">Operaciones - Depósitos</h1>
 
                     <!-- Formulario de Depósitos -->
-                    <div class="card shadow">
+                    <div class="card shadow m-5">
                         <div class="card-body p-5">
-                            <h3 class="mb-4">Depósitos</h3>
-                            
+                            <h3 class="mb-4 text-center">Depósitos</h3>
+
                             <form id="depositForm">
-                                <div class="row mb-4">
+                                <div class="row mb-4 justify-content-center">
+                                    <input type="hidden" id="numeroCuenta" th:value="${account.accountNumber}" />
                                     <div class="col-md-4">
-                                        <label for="numeroCuenta" class="form-label">Número de Cuenta</label>
-                                        <select id="numeroCuenta" name="numeroCuenta" class="form-control form-control-lg" required>
-                                            <option value="" disabled selected>Seleccione cuenta...</option>
-                                            <option th:each="acc : ${accounts}"
-                                                    th:value="${acc.accountNumber}"
-                                                    th:text="|${acc.type.name} - ${acc.accountNumber} - S/ ${acc.balance}|">
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label for="montoDepositar" class="form-label">Monto a Depositar</label>
-                                        <input type="number" class="form-control form-control-lg" id="montoDepositar" step="0.01" required>
+                                        <label for="monto" class="form-label">Monto a Depositar</label>
+                                        <input type="number" class="form-control form-control-lg" id="monto" step="0.01"
+                                            required>
                                     </div>
                                 </div>
-
-                                <!-- Fecha se captura en servidor al procesar el depósito -->
 
                                 <div class="text-center mt-5">
-                                    <button type="submit" class="btn btn-primary btn-lg px-5 py-3">Depositar</button>
+                                    <button type="submit" class="btn btn-primary btn-lg px-5 py-3">
+                                        <i class="fas fa-money-bill-wave me-2"></i>Depositar
+                                    </button>
                                 </div>
                             </form>
+
+                            <div class="text-start mt-5">
+                                <a href="/transactions" class="btn btn-outline-danger btn-lg px-5 py-3">
+                                    <i class="fas fa-arrow-left me-2"></i>Volver
+                                </a>
+                            </div>
                         </div>
                     </div>
-
-                    <!-- Alerta de Tiempo -->
-                    <div th:replace="~{user/fragments/time-alert :: time-alert}"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-    document.getElementById('depositForm').addEventListener('submit', async function (e) {
-      e.preventDefault();
+        // 🔧 MODO DESARROLLO: Deshabilitar geolocalización temporalmente
+        const DESARROLLO = true; // Cambia a false cuando despliegues
 
-      const numeroCuenta = document.getElementById('numeroCuenta').value.trim();
-      const montoStr = document.getElementById('montoDepositar').value;
+        document.querySelector("#depositForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
 
-      if (!numeroCuenta) { alert('Ingrese número de cuenta'); return; }
-      if (!montoStr || isNaN(montoStr) || Number(montoStr) <= 0) { alert('Ingrese un monto válido'); return; }
+            const monto = document.getElementById("monto").value;
 
-      const payload = {
-        numeroCuenta,
-        monto: montoStr
-      };
+            if (!monto || Number(monto) <= 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ingrese un monto válido',
+                    timer: 2000
+                });
+                return;
+            }
 
-      try {
-        const res = await fetch('/transactions/deposit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'same-origin',
-          body: JSON.stringify(payload)
+            Swal.fire({
+                title: 'Procesando depósito...',
+                html: 'Por favor espere',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            let ubicacion = null;
+
+            // Solo intentar geolocalización si NO está en modo desarrollo
+            if (!DESARROLLO) {
+                try {
+                    ubicacion = await obtenerUbicacion();
+                } catch (error) {
+                    console.log('⚠️ Error ubicación:', error);
+                }
+            } else {
+                console.log('🔧 Modo desarrollo: geolocalización desactivada');
+            }
+
+            await enviarDeposito(monto, ubicacion);
         });
 
-        const body = await res.json().catch(() => ({}));
-        if (res.ok) {
-          alert(body.mensaje || 'Depósito exitoso');
-          window.location.href = '/transactions';
-        } else {
-          alert(body.mensaje || 'Error en el depósito');
+        function obtenerUbicacion() {
+            return new Promise((resolve, reject) => {
+                if (!navigator.geolocation) {
+                    resolve(null);
+                    return;
+                }
+
+                const timeout = setTimeout(() => resolve(null), 3000);
+
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        clearTimeout(timeout);
+                        resolve({
+                            latitud: position.coords.latitude,
+                            longitud: position.coords.longitude
+                        });
+                    },
+                    (error) => {
+                        clearTimeout(timeout);
+                        resolve(null);
+                    },
+                    {
+                        enableHighAccuracy: false,
+                        timeout: 3000,
+                        maximumAge: 300000
+                    }
+                );
+            });
         }
-      } catch (err) {
-        console.error('Error al realizar depósito:', err);
-        alert('Error de comunicación con el servidor');
-      }
-    });
+
+        async function enviarDeposito(monto, ubicacion) {
+            try {
+                const payload = { monto };
+
+                if (ubicacion) {
+                    payload.latitud = ubicacion.latitud;
+                    payload.longitud = ubicacion.longitud;
+                    console.log('📍 Enviando CON ubicación:', ubicacion);
+                } else {
+                    console.log('📍 Enviando SIN ubicación');
+                }
+
+                const res = await fetch("/transactions/deposit", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                const body = await res.json();
+
+                if (res.ok) {
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Depósito exitoso',
+                        html: `
+                        <p><strong>Nuevo saldo:</strong> S/ ${body.nuevoSaldo}</p>
+                        <p><small>Comprobante enviado a su email</small></p>
+                    `,
+                        timer: 3000,
+                        showConfirmButton: false
+                    });
+                    window.location.href = "/transactions";
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: body.mensaje || 'Error al procesar el depósito'
+                    });
+                }
+            } catch (error) {
+                console.error('❌ Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de conexión',
+                    text: 'No se pudo conectar con el servidor'
+                });
+            }
+        }
+    </script>
+
+    <script>
+        // ⏱️ Control de sesión
+        let timeLeft = 60;
+        setInterval(() => {
+            timeLeft--;
+            if (timeLeft === 30) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Atención",
+                    text: "La sesión se cerrará en 30 segundos.",
+                    timer: 2500,
+                    showConfirmButton: false
+                });
+            }
+            if (timeLeft <= 0) {
+                window.location.href = "/logout";
+            }
+        }, 1000);
     </script>
 </body>
+
 </html>

@@ -12,31 +12,48 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Controller
-@RequiredArgsConstructor
 @RequestMapping("customer")
+@RequiredArgsConstructor
 public class CustomerController {
+
     private final CustomerService customerService;
+
     @GetMapping
-     public String ListCustomer(Model model){
+    public String viewCustomer(Model model,
+            @RequestParam(required = false) Long newId) {
+
+        if (newId != null) {
+            Customer c = customerService.getCustomerById(newId);
+            model.addAttribute("customer", c);
+        } else {
+            
+            model.addAttribute("customer", new Customer());
+        }
+
         model.addAttribute("list", customerService.getAllCustomer());
-        model.addAttribute("customer", new Customer());
         return "admin/registro-usuario";
     }
+
     @PostMapping("/save")
     public String addCustomer(@Valid @ModelAttribute Customer customer, BindingResult error, Model model) {
         if (error.hasErrors()) {
             System.out.println("Errores: " + error.getAllErrors());
+            model.addAttribute("customer", customer);
             model.addAttribute("list", customerService.getAllCustomer());
             return "admin/registro-usuario";
         }
         customerService.addUser(customer);
         return "redirect:/customer";
     }
-     @GetMapping("/edit/{id}")
+
+   
+
+    @GetMapping("/edit/{id}")
     public String editCustomer(@PathVariable Long id, Model model) {
         try {
             model.addAttribute("customer", customerService.getCustomerById(id));
@@ -47,7 +64,7 @@ public class CustomerController {
             return "admin/registro-usuario";
         }
     }
-    
+
     @PostMapping("/delete")
     public String deleteCustomer(@RequestParam Long id, Model model) {
         try {

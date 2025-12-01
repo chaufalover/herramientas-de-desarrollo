@@ -11,7 +11,7 @@ import org.springframework.web.client.RestTemplate;
 public class QrService {
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private final String QR_API_URL = "http://127.0.0.1:8001/generate";
+    private final String QR_API_URL = "http://127.0.0.1:8000/generate";
 
     public String generateQr(String accountNumber) {
         Map<String, String> request = new HashMap<>();

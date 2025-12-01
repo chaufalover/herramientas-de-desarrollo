@@ -68,7 +68,10 @@ public class AccountService {
             .orElse(null);
     }
 
-  
+    public Account getAccountByNumber(String accountNumber) {
+        return accountRepository.findByAccountNumber(accountNumber).orElse(null);
+    }
+
     @Transactional
     public BigDecimal deposit(String accountNumberDest, BigDecimal amount, Long customerId) {
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
